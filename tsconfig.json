@@ -1,6 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["app/(frontend)/components/*"],
+      "@/hooks/*": ["app/(frontend)/hooks/*"],
+      "@/store/*": ["app/(frontend)/store/*"],
+      "@/utils/*": ["app/(frontend)/utils/*"],
+      "@/services/*": ["app/(backend)/services/*"],
+      "@/api/*": ["app/(backend)/api/*"],
+    },
+    "target": "ES6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,

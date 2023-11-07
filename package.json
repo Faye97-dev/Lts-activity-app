@@ -5,7 +5,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate:push": "drizzle-kit push:pg",
+    "migrate:generate": "drizzle-kit generate:pg",
+    "migrate:drop": "drizzle-kit drop"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -18,12 +21,15 @@
     "@vercel/analytics": "^1.1.1",
     "@vercel/postgres": "^0.5.0",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.28.6",
     "eslint": "8.52.0",
     "eslint-config-next": "14.0.0",
     "js-cookie": "^3.0.5",
     "next": "14.0.0",
     "next-auth": "5.0.0-beta.3",
     "node": "^18.14.0",
+    "pg": "^8.11.3",
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prop-types": "^15.8.1",
@@ -38,5 +44,10 @@
     "singleQuote": true,
     "tabWidth": 2,
     "trailingComma": "none"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.8",
+    "drizzle-kit": "^0.19.13",
+    "i": "^0.3.7"
   }
 }

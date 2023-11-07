@@ -1,6 +1,7 @@
-import { sql } from '@vercel/postgres';
 import { Card, Title, Text } from '@tremor/react';
-import Search from '../components/search';
+import Search from '@/components/search';
+import { db } from 'db';
+
 // import UsersTable from './components/table';
 
 interface User {
@@ -22,6 +23,14 @@ export default async function IndexPage({
   //   WHERE name ILIKE ${'%' + search + '%'};
   // `;
   // const users = result.rows as User[];
+
+  // const users = await db.query.users.findMany({
+  //   with: {
+  //     role: true
+  //   }
+  // });
+  // console.log(users, 'users');
+  db;
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
