@@ -1,20 +1,20 @@
 - tue
-    - drizzle setup and db 
-    - add sessions grouping
-    - toggle submited session 
-    - database structure 
 - wen
+    - database structure 
     - auth user , jwt and persist in db
-    - complete all needed endpoint
-    - start front ui ( shadcn )
+    - start api endpoint
 - thu
     - middleware auth and authorization 
-    - complete admin / departement ui ( demo )
+    - complete all needed endpoint  
+    - add seeders
+    - start admin / departement ui
 - fri
+    - complete admin / departement ui ( demo )
+    - toggle submited session 
     - 3drenders app 
 - sat
     - 3drenders app 
-    - add seeders and demo ennah  
     - demo for ennah 
 - sun 
+    - 3drenders app 
     - demo for 3renders
