@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1699566549194,
+      "tag": "0000_chubby_selene",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1699575622284,
+      "tag": "0001_classy_psylocke",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1699579668347,
+      "tag": "0002_massive_dormammu",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1699579933256,
+      "tag": "0003_polite_randall_flagg",
+      "breakpoints": true
+    }
+  ]
+}
