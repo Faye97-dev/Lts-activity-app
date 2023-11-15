@@ -3,13 +3,28 @@
 import { Fragment } from 'react';
 import { usePathname } from 'next/navigation';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { signIn, signOut } from 'next-auth/react';
+import { XIcon } from '@heroicons/react/solid';
+import { DotsCircleHorizontalIcon } from '@heroicons/react/outline';
+
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { LogOut } from 'lucide-react';
+import {
+  ROLE_ADMIN,
+  ROLE_DEFAULT,
+  ROLE_SUPER_ADMIN
+} from 'config/global.config';
 
 const navigation = [
-  { name: 'Dashboard', href: '/' },
-  { name: 'Playground', href: '/playground' }
+  // { name: 'Accueil', href: '/' },
+  { name: 'Activités', href: '/activities', roles: [ROLE_DEFAULT] },
+  { name: 'Departements', href: '/departments', roles: [ROLE_ADMIN] },
+  { name: 'Dashboard', href: '/dashboard', roles: [ROLE_SUPER_ADMIN] },
+  {
+    href: '/profile',
+    name: 'Mon Profil',
+    roles: [ROLE_SUPER_ADMIN, ROLE_DEFAULT, ROLE_ADMIN]
+  }
 ];
 
 function classNames(...classes: string[]) {
@@ -18,9 +33,10 @@ function classNames(...classes: string[]) {
 
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
-    <Disclosure as="nav" className="bg-white shadow-sm">
+    <Disclosure as="nav" className="bg-white shadow-lg">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -50,28 +66,36 @@ export default function Navbar({ user }: { user: any }) {
                   </svg>
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                  {navigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className={classNames(
-                        pathname === item.href
-                          ? 'border-slate-500 text-gray-900'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                        'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
-                      )}
-                      aria-current={pathname === item.href ? 'page' : undefined}
-                    >
-                      {item.name}
-                    </a>
-                  ))}
+                  {navigation
+                    .filter((item) =>
+                      item.roles.includes(
+                        session?.user?.token?.role?.slug || ''
+                      )
+                    )
+                    .map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className={classNames(
+                          pathname === item.href
+                            ? 'border-primary text-primary'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                          'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                        )}
+                        aria-current={
+                          pathname === item.href ? 'page' : undefined
+                        }
+                      >
+                        {item.name}
+                      </a>
+                    ))}
                 </div>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-                      <span className="sr-only">Open user menu</span>
+                      {/* <span className="sr-only">Open user menu</span> */}
                       <Image
                         className="h-8 w-8 rounded-full"
                         src={user?.image || 'https://avatar.vercel.sh/leerob'}
@@ -91,17 +115,32 @@ export default function Navbar({ user }: { user: any }) {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      {/* <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            className={classNames(
+                              active ? 'bg-gray-100' : '',
+                              'flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700'
+                            )}
+                            //onClick={() => signOut()} 
+                          >
+                            <User className="h-4 w-4" />
+                            Profil utilisateur
+                          </button>
+                        )}
+                      </Menu.Item> */}
                       {user ? (
                         <Menu.Item>
                           {({ active }) => (
                             <button
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'flex w-full px-4 py-2 text-sm text-gray-700'
+                                'flex items-center hover:bg-red-50 gap-2 w-full px-4 py-2 text-sm text-red-700'
                               )}
                               onClick={() => signOut()}
                             >
-                              Sign out
+                              <LogOut className="h-4 w-4" />
+                              Se déconneter
                             </button>
                           )}
                         </Menu.Item>
@@ -115,7 +154,7 @@ export default function Navbar({ user }: { user: any }) {
                               )}
                               onClick={() => signIn('github')}
                             >
-                              Sign in
+                              Se connecter
                             </button>
                           )}
                         </Menu.Item>
@@ -126,11 +165,14 @@ export default function Navbar({ user }: { user: any }) {
               </div>
               <div className="-mr-2 flex items-center sm:hidden">
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-                  <span className="sr-only">Open main menu</span>
+                  {/* <span className="sr-only">Open main menu</span> */}
                   {open ? (
-                    <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                    <XIcon className="block h-6 w-6" aria-hidden="true" />
                   ) : (
-                    <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                    <DotsCircleHorizontalIcon
+                      className="block h-6 w-6"
+                      aria-hidden="true"
+                    />
                   )}
                 </Disclosure.Button>
               </div>
@@ -157,10 +199,10 @@ export default function Navbar({ user }: { user: any }) {
               ))}
             </div>
             <div className="border-t border-gray-200 pt-4 pb-3">
-              {user ? (
+              {user && (
                 <>
                   <div className="flex items-center px-4">
-                    <div className="flex-shrink-0">
+                    {/* <div className="flex-shrink-0">
                       <Image
                         className="h-8 w-8 rounded-full"
                         src={user.image}
@@ -168,10 +210,10 @@ export default function Navbar({ user }: { user: any }) {
                         width={32}
                         alt={`${user.name} avatar`}
                       />
-                    </div>
-                    <div className="ml-3">
+                    </div> */}
+                    <div className="">
                       <div className="text-base font-medium text-gray-800">
-                        {user.name}
+                        {user.firstName}
                       </div>
                       <div className="text-sm font-medium text-gray-500">
                         {user.email}
@@ -181,21 +223,13 @@ export default function Navbar({ user }: { user: any }) {
                   <div className="mt-3 space-y-1">
                     <button
                       onClick={() => signOut()}
-                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                      className="flex items-center gap-2 px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                     >
-                      Sign out
+                      <LogOut className="h-4 w-4" />
+                      Se déconneter
                     </button>
                   </div>
                 </>
-              ) : (
-                <div className="mt-3 space-y-1">
-                  <button
-                    onClick={() => signIn('github')}
-                    className="flex w-full px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                  >
-                    Sign in
-                  </button>
-                </div>
               )}
             </div>
           </Disclosure.Panel>

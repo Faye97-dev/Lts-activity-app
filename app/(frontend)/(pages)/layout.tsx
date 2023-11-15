@@ -1,30 +1,47 @@
-import './globals.css';
+import '../../globals.css';
 
-import { Analytics } from '@vercel/analytics/react';
 import Nav from '@/components/nav';
-import Toast from '@/components/toast';
 import { Suspense } from 'react';
+import ReactQueryProviders from '../react-query-provider';
 
 export const metadata = {
-  title: 'Next.js App Router + NextAuth + Tailwind CSS',
-  description:
-    'A user admin dashboard configured with Next.js, Postgres, NextAuth, Tailwind CSS, TypeScript, ESLint, and Prettier.'
+  title: 'Lts Next js app'
 };
 
-export default function RootLayout({
+import { Inter as FontSans } from 'next/font/google';
+import { cn } from 'lib/utils';
+import { Toaster } from '@/components/ui/toaster';
+import { SessionProvider } from 'next-auth/react';
+import { auth } from 'lib/auth';
+
+const fontSans = FontSans({
+  subsets: ['latin'],
+  variable: '--font-sans'
+});
+
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
   return (
-    <html lang="en" className="h-full bg-gray-50">
-      <body className="h-full">
-        <Suspense>
-          <Nav />
-        </Suspense>
-        {children}
-        <Analytics />
-        <Toast />
+    <html lang="en">
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased',
+          fontSans.variable
+        )}
+      >
+        <SessionProvider session={session}>
+          <ReactQueryProviders>
+            <Suspense>
+              <Nav />
+            </Suspense>
+            {children}
+            <Toaster />
+          </ReactQueryProviders>
+        </SessionProvider>
       </body>
     </html>
   );
