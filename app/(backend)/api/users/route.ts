@@ -31,7 +31,8 @@ export async function GET(request: Request) {
         // todo add pagination
         const users = await db.query.users.findMany({
             with: { role: true, department: true },
-            columns: { password: false }
+            columns: { password: false },
+            orderBy: (users, { desc }) => [desc(users.createdAt)],
         });
         return Response.json(users, { status: 200 })
     } catch (e) {

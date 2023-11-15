@@ -1,9 +1,14 @@
 import NextAuth, { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare, hash } from 'bcrypt'
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { compare } from 'bcrypt'
 import { db } from 'db';
 
 export const authConfig = {
+    session: {
+        strategy: "jwt",
+    },
+    adapter: DrizzleAdapter(db),
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -23,16 +28,21 @@ export const authConfig = {
                     const passwordIsValid = await compare(password, user.password)
                     return passwordIsValid ? user : null
                 }
+                // todo check if user is active
 
                 return null
             }
         })
     ],
     callbacks: {
-        //   async session({session, user}) {
-        //     session.user.id = user.id
-        //     return session
-        //   },
+        async session({ session, token }) {
+            session.user.token = token
+            return session
+        },
+        jwt: async ({ user, token }) => {
+            if (user) token = { ...token, ...user }
+            return token;
+        },
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user
             const adminPaths = ["/bo/department", "/bo/activity"]

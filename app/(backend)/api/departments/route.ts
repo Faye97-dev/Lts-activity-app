@@ -32,6 +32,7 @@ export async function GET(request: Request) {
                     columns: { password: false }
                 }
             },
+            orderBy: (departments, { desc }) => [desc(departments.createdAt)],
         });
         return Response.json(departments, { status: 200 })
     } catch (e) {

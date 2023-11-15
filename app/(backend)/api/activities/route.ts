@@ -38,7 +38,8 @@ export async function GET(request: NextRequest) {
 
         const result = await db.query.activities.findMany({
             with: { department: true },
-            ...(departmentId && { where: eq(activities.departmentId, departmentId) })
+            ...(departmentId && { where: eq(activities.departmentId, departmentId) }),
+            orderBy: (activities, { desc }) => [desc(activities.createdAt)],
         });
         return Response.json(result, { status: 200 })
     } catch (e) {
