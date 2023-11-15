@@ -1,1 +1,0 @@
-ALTER TABLE "activities" ADD COLUMN "name" varchar(256) NOT NULL;

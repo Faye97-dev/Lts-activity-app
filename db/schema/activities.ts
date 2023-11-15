@@ -8,7 +8,8 @@ import {
     uuid,
     varchar,
 } from "drizzle-orm/pg-core"
-import { departments, users } from "./users"
+import { departments } from "./users"
+import { users } from "./next-auth"
 
 export const activities = pgTable("activities", {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -50,3 +51,10 @@ export const timelineRelations = relations(timeline, ({ one }) => ({
         references: [activities.id],
     })
 }))
+
+
+export type Activity = typeof activities.$inferSelect;
+export type NewActivity = typeof activities.$inferInsert;
+
+export type Timeline = typeof timeline.$inferSelect;
+export type NewTimeline = typeof timeline.$inferInsert;

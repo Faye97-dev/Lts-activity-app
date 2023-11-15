@@ -1,20 +1,66 @@
+- mon
+    - 3drenders admin complete
+    - netflify deploy and auth 
+    
 - tue
+    - dashboard kpis api
+    - global dashboard stage
+    - start package app (2h)
+
 - wen
-    - database structure 
-    - auth user , jwt and persist in db
-    - start api endpoint
-- thu
-    - middleware auth and authorization 
-    - complete all needed endpoint  
-    - add seeders
-    - start admin / departement ui
+    - complete dashboard 
+    - delete , update password
+    - grant issues
+ 
+- thu **
+    - package app (2h)
+    - pagination , custom login , edit
+    
 - fri
-    - complete admin / departement ui ( demo )
-    - toggle submited session 
-    - 3drenders app 
+    - package app (2h)
+    - backend , refactor , improvements
+   
 - sat
-    - 3drenders app 
-    - demo for ennah 
+    - package app ( 8h )
+    - demo ennah  
+   
 - sun 
-    - 3drenders app 
-    - demo for 3renders
+    - package app (6h)
+    - demo package 
+
+** front :
+// fix cible added only by admin 
+// fix add timeline by using effectif cumulé
+// fix trucante long comment 
+// dashboard : 
+    - (activity , departments , cible , realisé) stats
+    - timeline graph by level
+
+// delete activité , department + user ( cascade )
+// change password user and profil
+// todo redirect to 403 page when user logged but haven't role grant ( export navigation )
+
+// todo add pagination 
+// edit department + user , activité
+// custom login page , and redirect to / when already logged in 
+
+** improvments :
+// todo add skeleton 
+// move toaster to top
+// move logout action in navbar 
+// update my profil data
+
+
+** refactor :
+// clean code !!
+// todo authorization role api side  
+// todo add type definition ( remove any ) !!
+
+** backend 
+// todo add db transaction 
+// todo add zod validation 
+// todo order by default desc by created 
+// todo check if logged in api side ( or Jwt )
+// add role seeders and admin , super admin 
+
+||

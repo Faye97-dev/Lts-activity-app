@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm"
 import {
-    boolean,
-    pgTable,
-    timestamp,
     uuid,
+    pgTable,
     varchar,
+    timestamp,
 } from "drizzle-orm/pg-core"
+import { users } from "./next-auth"
 
 // todo add seeders roles 
 export const roles = pgTable("roles", {
@@ -16,21 +16,23 @@ export const roles = pgTable("roles", {
     updatedAt: timestamp("updated_at"),
 })
 
-export const users = pgTable("users", {
-    id: uuid("id").defaultRandom().primaryKey(),
-    firstName: varchar("first_name", { length: 256 }).notNull(),
-    lastName: varchar("last_name", { length: 256 }).notNull(),
-    password: varchar("password", { length: 256 }).notNull(),
-    whatsappPhone: varchar("whatsapp_phone", { length: 256 }),
-    email: varchar("email", { length: 256 }).notNull().unique(),
-    isActive: boolean("is_active").default(true),
-    phone: varchar("phone", { length: 256 }),
-    departmentId: uuid("department_id"),
-    roleId: uuid("role_id").notNull(),
-    // zoneType: zoneTypeEnum("zone_type"),
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at"),
-})
+// todo clean 
+// export const users = pgTable("users", {
+//     id: uuid("id").defaultRandom().primaryKey(),
+//     firstName: varchar("first_name", { length: 256 }).notNull(),
+//     lastName: varchar("last_name", { length: 256 }).notNull(),
+//     password: varchar("password", { length: 256 }).notNull(),
+//     whatsappPhone: varchar("whatsapp_phone", { length: 256 }),
+//     email: varchar("email", { length: 256 }).notNull().unique(),
+//     isActive: boolean("is_active").default(true),
+//     phone: varchar("phone", { length: 256 }),
+//     departmentId: uuid("department_id"),
+//     roleId: uuid("role_id").notNull(),
+//     // zoneType: zoneTypeEnum("zone_type"),
+//     createdAt: timestamp("created_at").defaultNow(),
+//     updatedAt: timestamp("updated_at"),
+// })
+
 export const userRelations = relations(users, ({ one }) => ({
     role: one(roles, {
         fields: [users.roleId],
@@ -49,6 +51,16 @@ export const departments = pgTable("departments", {
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at"),
 })
+
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+export type Role = typeof roles.$inferSelect;
+export type NewRole = typeof roles.$inferInsert;
+
+export type Department = typeof departments.$inferSelect;
+export type NewDepartment = typeof departments.$inferInsert;
 
 /* todo
 
