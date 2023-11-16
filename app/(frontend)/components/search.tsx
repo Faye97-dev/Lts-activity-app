@@ -1,6 +1,6 @@
 'use client';
 
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+// import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 
@@ -32,10 +32,10 @@ export default function Search({ disabled }: { disabled?: boolean }) {
           className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
           aria-hidden="true"
         >
-          <MagnifyingGlassIcon
+          {/* <MagnifyingGlassIcon
             className="mr-3 h-4 w-4 text-gray-400"
             aria-hidden="true"
-          />
+          /> */}
         </div>
         <input
           type="text"

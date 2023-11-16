@@ -1,0 +1,1 @@
+ALTER TABLE "timeline" ALTER COLUMN "cumulative_total_created" SET DEFAULT '0';

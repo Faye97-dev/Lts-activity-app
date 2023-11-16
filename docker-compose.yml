@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    container_name: lts-app-db
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+    environment:
+      - POSTGRES_DB=lts_app_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  adminer:
+    image: adminer
+    container_name: lts-app-adminer
+    restart: always
+    ports:
+      - 8075:8080

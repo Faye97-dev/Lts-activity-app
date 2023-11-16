@@ -1,34 +1,25 @@
-import { sql } from '@vercel/postgres';
-import { Card, Title, Text } from '@tremor/react';
-import Search from '../components/search';
-// import UsersTable from './components/table';
+import {
+  ROLE_ADMIN,
+  ROLE_DEFAULT,
+  ROLE_SUPER_ADMIN
+} from 'config/global.config';
+import { auth } from 'lib/auth';
+import { redirect } from 'next/navigation';
 
-interface User {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-}
+export default async function IndexPage() {
+  const session = await auth();
+  if (!session?.user) redirect('api/auth/signin'); // todo update to /login
 
-export default async function IndexPage({
-  searchParams
-}: {
-  searchParams: { q: string };
-}) {
-  // const search = searchParams.q ?? '';
-  // const result = await sql`
-  //   SELECT id, name, username, email
-  //   FROM users
-  //   WHERE name ILIKE ${'%' + search + '%'};
-  // `;
-  // const users = result.rows as User[];
+  if (session?.user) {
+    switch (session.user?.token.role.slug) {
+      case ROLE_ADMIN:
+        redirect('/dashboard');
+      case ROLE_SUPER_ADMIN:
+        redirect('/departments');
+      default:
+        redirect('/activities');
+    }
+  }
 
-  return (
-    <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>Users</Title>
-      <Text>A list of users retrieved from a Postgres database.</Text>
-      <Search />
-      <Card className="mt-6">{/* <UsersTable users={users} /> */}</Card>
-    </main>
-  );
+  return <></>;
 }

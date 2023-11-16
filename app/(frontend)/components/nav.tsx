@@ -1,5 +1,5 @@
-import Navbar from './navbar';
-import { auth } from '../../(backend)/api/auth/[...nextauth]/route';
+import Navbar from '@/components/navbar';
+import { auth } from 'lib/auth';
 
 export default async function Nav() {
   const session = await auth();

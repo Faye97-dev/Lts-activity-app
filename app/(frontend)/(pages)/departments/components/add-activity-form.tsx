@@ -1,0 +1,224 @@
+'use client';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
+import { Button as ButtonShadcn } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { Activity } from 'db/schema';
+import { Button } from '@tremor/react';
+import { CheckCircle, CalendarIcon } from 'lucide-react';
+import { useGenericMutation } from '@/hooks/useApi';
+import { API_ADD_ACTIVITY } from 'config/api-endpoints.config';
+import { useQueryClient } from '@tanstack/react-query';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { cn } from 'lib/utils';
+
+const addActivityFormSchema = z.object({
+  name: z
+    .string({ required_error: "Titre de l'activité est obligatoire." })
+    .min(2, { message: "Titre de l'activité du departement trop court." })
+    .max(60, { message: "Titre de l'activité du departement trop long." }),
+  // todo add valdation for dates
+  startDate: z.date({ required_error: 'Date de début est obligatoire.' }),
+  endDate: z.date({ required_error: 'Date de fin est obligatoire.' }),
+  manager: z.string().optional()
+});
+
+type AddActivityFormValues = z.infer<typeof addActivityFormSchema>;
+
+const defaultValues: Partial<AddActivityFormValues> = {};
+
+export function AddActivityForm({
+  onClose,
+  department
+}: {
+  onClose: () => void;
+  department: any; // todo fixme
+}) {
+  const form = useForm<AddActivityFormValues>({
+    resolver: zodResolver(addActivityFormSchema),
+    defaultValues,
+    mode: 'onChange'
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useGenericMutation<
+    AddActivityFormValues,
+    Activity
+  >();
+
+  function onSubmit(formValues: AddActivityFormValues) {
+    const paylaod = {
+      ...formValues,
+      departmentId: department?.id
+    };
+
+    mutate(
+      { url: API_ADD_ACTIVITY, method: 'POST', body: paylaod },
+      {
+        onSuccess: () => {
+          toast({
+            variant: 'success',
+            description: (
+              <div className="flex font-bold items-center gap-2">
+                <CheckCircle className="w-6 h-6" /> Opération reussi.
+              </div>
+            )
+          });
+          onClose();
+          queryClient.invalidateQueries({
+            queryKey: ['QUERY_DEPARTMENTS_LIST']
+          });
+        }
+      }
+    );
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-y-3 mt-4"
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Titre de l'activité</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter un titre" {...field} />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="startDate"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Date de début</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <ButtonShadcn
+                      variant="outline"
+                      className={cn(
+                        'w-full pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, 'PPP')
+                      ) : (
+                        <span>Enter la date de début</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </ButtonShadcn>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    initialFocus
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) => date < new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="endDate"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Date de fin</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <ButtonShadcn
+                      variant="outline"
+                      className={cn(
+                        'w-full pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, 'PPP')
+                      ) : (
+                        <span>Enter la date de fin</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </ButtonShadcn>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    initialFocus
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) => date < new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="manager"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Structure pilote</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter la structure pilote" {...field} />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-end gap-3 mt-4">
+          <Button
+            color="red"
+            type="button"
+            loading={isPending}
+            onClick={onClose}
+          >
+            Annuler
+          </Button>
+
+          <Button type="submit" color="green" loading={isPending}>
+            Enregistrer
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
