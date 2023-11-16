@@ -2,6 +2,17 @@ import { registerNewUser } from "@/services/users.service";
 import { db } from "db";
 import { departments } from "db/schema";
 
+/*
+{
+  "departmentName": "test",
+  "departmentSlug": "Ab",
+  "password" : "admin",
+  "firstName" :"dev",
+  "lastName" : "user",
+  "email" : "dev@gmail.com"
+}
+*/
+
 // todo check if logged
 export async function POST(request: Request) {
     try {

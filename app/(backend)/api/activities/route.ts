@@ -1,5 +1,5 @@
 import { db } from "db";
-import { activities, } from "db/schema";
+import { activities } from "db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 
@@ -19,8 +19,12 @@ export async function POST(request: Request) {
         const data = await request.json()
         // todo add validation with zod 
         const activity = await db.insert(activities).values({
-            startDate: data.startDate, endDate: data.endDate, name: data.name,
-            departmentId: data.departmentId, manager: data.manager || null
+            name: data.name,
+            endDate: data.endDate,
+            startDate: data.startDate,
+            manager: data.manager || null,
+            totalTarget: data.totalTarget,
+            departmentId: data.departmentId,
         }).returning()
 
         return Response.json(activity?.[0], { status: 201 })
