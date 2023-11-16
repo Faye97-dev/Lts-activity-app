@@ -1,25 +1,25 @@
-- mon
+- mon ( done )
     - 3drenders admin complete
     - netflify deploy and auth 
-    
 - tue
-    - dashboard kpis api
-    - global dashboard stage
-    - start package app (2h)
+
 
 - wen
-    - complete dashboard 
-    - delete , update password
-    - grant issues
+    - dashboard kpis api
+    - global dashboard stage   
  
 - thu **
     - package app (2h)
-    - pagination , custom login , edit
-    
+    - complete dashboard 
+    - delete , update password
+    - pages grant by roles issue
+ 
+
 - fri
-    - package app (2h)
     - backend , refactor , improvements
-   
+    - pagination , custom login , edit
+
+    
 - sat
     - package app ( 8h )
     - demo ennah  
@@ -31,20 +31,29 @@
 ** front :
 // fix cible added only by admin 
 // fix add timeline by using effectif cumulé
-// fix trucante long comment 
-// dashboard : 
-    - (activity , departments , cible , realisé) stats
-    - timeline graph by level
+// todo remove cible from timeline and can be edited on account side 
+// fix trucante long comment , comment optional 
+// todo remove date restriction on update activity
+// update activity modal ( form inputs , modal title .... ) 
 
-// delete activité , department + user ( cascade )
-// change password user and profil
+// dashboard : 
+    - (activity , departments , cible , realisé) stats **
+    - timeline graph by level **
+
+// delete activité , department + user ( cascade ) **
 // todo redirect to 403 page when user logged but haven't role grant ( export navigation )
 
 // todo add pagination 
-// edit department + user , activité
+// edit 
+    - update password 
+    - edit department + user 
+    - block user , update profil user  **
+    - edit activité info in admin side **
+
+
 // custom login page , and redirect to / when already logged in 
 
-** improvments :
+** improvements :
 // todo add skeleton 
 // move toaster to top
 // move logout action in navbar 
@@ -61,6 +70,11 @@
 // todo add zod validation 
 // todo order by default desc by created 
 // todo check if logged in api side ( or Jwt )
-// add role seeders and admin , super admin 
+// todo add try catch on db query ( uuid cases, other ... )
+
+seeders :
+// add roles 
+// add admin and stage user 
 
 ||
+

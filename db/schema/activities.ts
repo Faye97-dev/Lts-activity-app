@@ -40,10 +40,10 @@ export const timeline = pgTable("timeline", {
     id: uuid("id").defaultRandom().primaryKey(),
     activityId: uuid("activity_id").notNull(),
     totalCreated: numeric("total_created").notNull(),
-    totalTarget: numeric("total_target").notNull(),
-    comment: text("comment"),
+    cumulativeTotalCreated: numeric("cumulative_total_created").notNull().default("0"), // todo unsed
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at"),
+    comment: text("comment"),
 })
 export const timelineRelations = relations(timeline, ({ one }) => ({
     activity: one(activities, {
