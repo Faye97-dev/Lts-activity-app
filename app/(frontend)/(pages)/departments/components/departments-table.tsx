@@ -82,6 +82,7 @@ export default function DepartmentsTable() {
             <TableHeaderCell className="p-3">Numéro tel</TableHeaderCell>
             <TableHeaderCell className="p-3">Numéro whatsapp</TableHeaderCell>
             <TableHeaderCell className="p-3">Status</TableHeaderCell>
+            <TableHeaderCell className="p-3">Total d'activité</TableHeaderCell>
             <TableHeaderCell className="p-3">Ajouté le</TableHeaderCell>
             <TableHeaderCell className="p-3">Actions</TableHeaderCell>
           </TableRow>
@@ -117,6 +118,9 @@ export default function DepartmentsTable() {
                     ) : (
                       '--'
                     )}
+                  </TableCell>
+                  <TableCell className="p-3">
+                    {department.activities.length}
                   </TableCell>
                   <TableCell className="p-3">
                     {department.createdAt?.split('T')?.[0]}

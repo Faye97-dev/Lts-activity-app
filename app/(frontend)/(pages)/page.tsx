@@ -12,9 +12,9 @@ export default async function IndexPage() {
 
   if (session?.user) {
     switch (session.user?.token.role.slug) {
-      case ROLE_SUPER_ADMIN:
-        redirect('/dashboard');
       case ROLE_ADMIN:
+        redirect('/dashboard');
+      case ROLE_SUPER_ADMIN:
         redirect('/departments');
       default:
         redirect('/activities');

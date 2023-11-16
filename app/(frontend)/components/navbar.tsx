@@ -18,8 +18,8 @@ import {
 const navigation = [
   // { name: 'Accueil', href: '/' },
   { name: 'Activités', href: '/activities', roles: [ROLE_DEFAULT] },
-  { name: 'Departements', href: '/departments', roles: [ROLE_ADMIN] },
-  { name: 'Dashboard', href: '/dashboard', roles: [ROLE_SUPER_ADMIN] },
+  { name: 'Departements', href: '/departments', roles: [ROLE_SUPER_ADMIN] },
+  { name: 'Dashboard', href: '/dashboard', roles: [ROLE_ADMIN] },
   {
     href: '/profile',
     name: 'Mon Profil',
