@@ -1,7 +1,9 @@
-import { db } from "db";
+import { addActivity } from "@/services/activities.service";
+import { NextRequest } from "next/server";
 import { activities } from "db/schema";
 import { eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
+import { auth } from "lib/auth";
+import { db } from "db";
 
 /*
 {
@@ -13,21 +15,19 @@ import { NextRequest } from "next/server";
 }
 */
 
-// todo check if logged
 export async function POST(request: Request) {
     try {
-        const data = await request.json()
         // todo add validation with zod 
-        const activity = await db.insert(activities).values({
-            name: data.name,
-            endDate: data.endDate,
-            startDate: data.startDate,
-            manager: data.manager || null,
-            totalTarget: data.totalTarget,
-            departmentId: data.departmentId,
-        }).returning()
+        const session = await auth();
+        if (!session?.user || !session?.user?.token?.role)
+            return Response.json({ message: "Unauthorized" }, { status: 401 })
 
-        return Response.json(activity?.[0], { status: 201 })
+        const data = await request.json()
+        const userRole = session.user.token.role.slug
+
+        const activity = await addActivity({ userRole, data })
+        if (activity) return Response.json(activity, { status: 200 })
+        return Response.json({ message: "Unauthorized" }, { status: 403 })
     } catch (e) {
         console.log(e)
     }
@@ -37,9 +37,12 @@ export async function POST(request: Request) {
 export async function GET(request: NextRequest) {
     try {
         // todo add pagination
+        const session = await auth();
+        if (!session?.user || !session?.user?.token?.role)
+            return Response.json({ message: "Unauthorized" }, { status: 401 })
+
         const searchParams = request.nextUrl.searchParams
         const departmentId = searchParams.get('department_id')
-
         const result = await db.query.activities.findMany({
             with: { department: true },
             ...(departmentId && { where: eq(activities.departmentId, departmentId) }),
