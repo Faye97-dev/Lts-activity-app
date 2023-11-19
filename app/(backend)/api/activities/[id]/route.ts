@@ -28,8 +28,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         return Response.json({ message: "Unauthorized" }, { status: 403 })
     } catch (e) {
         console.log(e)
+        return Response.json({ message: "Bad request" }, { status: 400 })
     }
-    return Response.json({ message: "Bad request" }, { status: 400 })
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
@@ -48,6 +48,6 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
         return Response.json({ message: "Unauthorized" }, { status: 403 })
     } catch (e) {
         console.log(e)
+        return Response.json({ message: "Bad request" }, { status: 400 })
     }
-    return Response.json({ message: "Bad request" }, { status: 400 })
 }

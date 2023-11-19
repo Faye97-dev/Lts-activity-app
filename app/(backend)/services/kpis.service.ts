@@ -1,6 +1,7 @@
 import { db } from "db";
 
 // todo add types
+// todo add comments
 const groupByTimebyDate = (timeline: any, departmentId: string) => {
     // ? timeline should ordered in asc by created at !!
     let groupByDate = ""
@@ -63,9 +64,7 @@ export const getActivitiesKpis = async (data: any) => {
         },
     });
 
-    if (!activity) {
-        return false
-    }
+    if (!activity) return false
 
     const latestTimeline = activity?.timeline?.[0]
     const totalTarget = activity?.totalTarget ? parseInt(activity.totalTarget) : 0
@@ -101,9 +100,7 @@ export const getDepartmentKpis = async (data: any) => {
 
     });
 
-    if (!department) {
-        return false;
-    }
+    if (!department) return false;
 
     // 
     const totalTarget = department?.activities.reduce((accumulator, activity) => {
@@ -125,10 +122,10 @@ export const getDepartmentKpis = async (data: any) => {
 
     return {
         kpis: {
+            activitiesCount: department?.activities.length || 0,
             totalTarget,
             totalCreated,
             departmentCount: null,
-            activitiesCount: department?.activities.length || 0,
         },
         timeline,
         // departementTimelines, // ? for debuging
@@ -148,7 +145,6 @@ export const getKpis = async () => {
         },
 
     });
-
 
     // 
     let totalTarget = 0;
@@ -186,10 +182,10 @@ export const getKpis = async () => {
 
     return {
         kpis: {
+            departmentCount: departments.length,
+            activitiesCount,
             totalTarget,
             totalCreated,
-            activitiesCount,
-            departmentCount: departments.length,
         },
         timeline,
         // timelines, // ? for debuging

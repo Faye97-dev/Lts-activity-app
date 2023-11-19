@@ -21,10 +21,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
                 .returning();
             return Response.json(updatedUser, { status: 200 })
         }
-
         return Response.json({ message: "Unauthorized" }, { status: 403 })
     } catch (e) {
         console.log(e)
+        return Response.json({ message: "Bad request" }, { status: 400 })
     }
-    return Response.json({ message: "Bad request" }, { status: 400 })
 }

@@ -3,6 +3,7 @@ import { activities, timeline } from "db/schema"
 import { eq } from "drizzle-orm"
 import { db } from "db";
 
+// todo add types 
 export const addActivity = async ({ userRole, data }: any) => {
     if (userRole === ROLE_SUPER_ADMIN) {
         const activity = await db.insert(activities).values({
@@ -17,7 +18,6 @@ export const addActivity = async ({ userRole, data }: any) => {
     }
     return false
 }
-
 
 export const updateActivity = async ({ userRole, data, params }: any) => {
     if (userRole === ROLE_SUPER_ADMIN) {
@@ -38,10 +38,18 @@ export const updateActivity = async ({ userRole, data, params }: any) => {
             .where(eq(activities.id, params.id))
             .returning();
 
+        const timelines = await db.query.timeline.findMany({
+            limit: 1,
+            orderBy: (timeline, { desc }) => [desc(timeline.createdAt)],
+            where: (timeline, { eq }) => eq(timeline.activityId, params.id),
+        })
+
+        const cumulativeTotalCreated = timelines?.length ? parseInt(timelines[0].cumulativeTotalCreated) + parseInt(data.totalCreated) : parseInt(data.totalCreated)
         await db.insert(timeline).values({
             activityId: params.id,
             comment: data.comment || "",
             totalCreated: data.totalCreated,
+            cumulativeTotalCreated: cumulativeTotalCreated.toString(),
         })
         return updatedActivity?.[0]
     }

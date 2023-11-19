@@ -1,9 +1,9 @@
-import { ROLE_SUPER_ADMIN } from "config/global.config";
-import { db } from "db";
+import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from "config/global.config";
 import { users } from "db/schema";
 import { eq } from "drizzle-orm"
 import { auth } from "lib/auth";
 import { hash } from "bcrypt";
+import { db } from "db";
 
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
@@ -15,7 +15,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
         const data = await request.json()
         const userRole = session.user.token.role.slug
-        if (userRole === ROLE_SUPER_ADMIN) {
+        if (userRole === ROLE_SUPER_ADMIN || userRole === ROLE_ADMIN) {
             const hashedPassword = await hash(data.password, 10) // todo fix salt
             const updatedUser = await db.update(users)
                 .set({ password: hashedPassword })
@@ -23,10 +23,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
                 .returning();
             return Response.json(updatedUser, { status: 200 })
         }
-
         return Response.json({ message: "Unauthorized" }, { status: 403 })
     } catch (e) {
         console.log(e)
+        return Response.json({ message: "Bad request" }, { status: 400 })
     }
-    return Response.json({ message: "Bad request" }, { status: 400 })
 }

@@ -18,6 +18,7 @@ import { db } from "db";
 export async function POST(request: Request) {
     try {
         // todo add validation with zod 
+        // todo add db transaction 
         const session = await auth();
         if (!session?.user || !session?.user?.token?.role)
             return Response.json({ message: "Unauthorized" }, { status: 401 })
@@ -26,12 +27,12 @@ export async function POST(request: Request) {
         const userRole = session.user.token.role.slug
 
         const activity = await addActivity({ userRole, data })
-        if (activity) return Response.json(activity, { status: 200 })
+        if (activity) return Response.json(activity, { status: 201 })
         return Response.json({ message: "Unauthorized" }, { status: 403 })
     } catch (e) {
         console.log(e)
+        return Response.json({ message: "Bad request" }, { status: 400 })
     }
-    return Response.json({ message: "Bad request" }, { status: 400 })
 }
 
 export async function GET(request: NextRequest) {
@@ -44,13 +45,19 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams
         const departmentId = searchParams.get('department_id')
         const result = await db.query.activities.findMany({
-            with: { department: true },
+            with: {
+                department: true,
+                timeline: {
+                    limit: 1,
+                    orderBy: (timeline, { desc }) => [desc(timeline.createdAt)],
+                }
+            },
             ...(departmentId && { where: eq(activities.departmentId, departmentId) }),
             orderBy: (activities, { desc }) => [desc(activities.createdAt)],
         });
         return Response.json(result, { status: 200 })
     } catch (e) {
         console.log(e)
+        return Response.json({ message: "Bad request" }, { status: 400 })
     }
-    return Response.json({ message: "Bad request" }, { status: 400 })
 }
