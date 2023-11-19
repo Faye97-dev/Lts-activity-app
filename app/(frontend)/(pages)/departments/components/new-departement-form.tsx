@@ -52,8 +52,8 @@ const newDepartmentFormSchema = z.object({
     .string({ required_error: 'Email est obligatoire.' })
     .email('Email non valide.'),
   // roleId: z.string({ required_error: 'Role est obligatoire.' }),
-  password: z.string({ required_error: 'Mot de passe est obligatoire.' }),
   // todo add validation confirm password
+  password: z.string({ required_error: 'Mot de passe est obligatoire.' }),
   confirmPassword: z.string({
     required_error: 'Confirmation du mot de passe est obligatoire.'
   }),

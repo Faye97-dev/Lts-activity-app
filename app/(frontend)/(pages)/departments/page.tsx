@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 
 export default async function DepartmentsPage() {
   const session = await auth();
-  if (!session?.user) redirect('api/auth/signin'); // todo update to /login
+  if (!session?.user) redirect('/api/auth/signin'); // todo update to /login
 
   const roles = await db.query.roles.findMany();
   return (

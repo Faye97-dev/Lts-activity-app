@@ -24,8 +24,6 @@ import { CheckCircle } from 'lucide-react';
 const addActivityFormSchema = z.object({
   totalCreated: z.string({ required_error: 'Nombre crée est obligatoire.' }),
   // .min(0, { message: 'Nombre crée invalide.' }),
-  totalTarget: z.string({ required_error: 'Nombre cible est obligatoire.' }),
-  // .min(0, { message: 'Nombre cible invalide.' }),
   comment: z.string().optional()
 });
 
@@ -38,11 +36,7 @@ export function EditActivityForm({
   onClose: () => void;
   activity: any; // todo fixme
 }) {
-  const defaultValues: Partial<EditActivityFormValues> = {
-    totalCreated: activity?.totalCreated,
-    totalTarget: activity?.totalTarget,
-    comment: activity?.comment
-  };
+  const defaultValues: Partial<EditActivityFormValues> = {};
 
   const form = useForm<EditActivityFormValues>({
     resolver: zodResolver(addActivityFormSchema),
@@ -113,33 +107,12 @@ export function EditActivityForm({
 
         <FormField
           control={form.control}
-          name="totalTarget"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nombre cible</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter le nombre cible"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="comment"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Commentaire</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Ajouter un commentaire"
-                  // className="resize-none"
-                  {...field}
-                />
+                <Textarea placeholder="Ajouter un commentaire" {...field} />
               </FormControl>
               <FormMessage className="text-xs" />
             </FormItem>

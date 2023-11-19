@@ -7,8 +7,7 @@ import {
   TableHeaderCell,
   TableBody,
   TableCell,
-  Text,
-  Badge
+  Text
 } from '@tremor/react';
 import { API_DEPARTMENTS_LIST } from 'config/api-endpoints.config';
 import { Activity, Department, User } from 'db/schema';
@@ -18,8 +17,7 @@ import {
   PackageOpen,
   EyeIcon,
   PencilIcon,
-  FileCheck,
-  UserXIcon
+  FileCheck
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -32,6 +30,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useState } from 'react';
 import AddActivityModal from './add-activity-modal';
+import { TrashIcon } from '@heroicons/react/solid';
+import DeleteDepartmentModal from './delete-department-modal';
 
 type DepartmentType = Department & {
   activities: Activity[];
@@ -41,12 +41,14 @@ type DepartmentType = Department & {
 
 export default function DepartmentsTable() {
   const [openAddActivityModal, setOpenAddActivityModal] = useState(false);
+  const [openDeleteDepartmentModal, setOpenDeleteDepartmentModal] =
+    useState(false);
   const [currentDepartment, setCurrentDepartment] =
     useState<DepartmentType | null>(null);
 
   const { isLoading, data: payload } = useGenericQuery<null, DepartmentType[]>({
     queryKey: 'QUERY_DEPARTMENTS_LIST',
-    requestData: { url: API_DEPARTMENTS_LIST, method: 'GET' } // queryParams: { search, limit: 10 }
+    requestData: { url: API_DEPARTMENTS_LIST, method: 'GET' }
   });
 
   const toogleAddActivityModal = ({
@@ -57,6 +59,17 @@ export default function DepartmentsTable() {
     department?: DepartmentType;
   }) => {
     setOpenAddActivityModal(isOpen);
+    setCurrentDepartment(department || null);
+  };
+
+  const toogleDeleteDepartmentModal = ({
+    isOpen = false,
+    department = undefined
+  }: {
+    isOpen: boolean;
+    department?: DepartmentType;
+  }) => {
+    setOpenDeleteDepartmentModal(isOpen);
     setCurrentDepartment(department || null);
   };
 
@@ -72,6 +85,13 @@ export default function DepartmentsTable() {
         onClose={() => toogleAddActivityModal({ isOpen: false })}
       />
 
+      <DeleteDepartmentModal
+        department={currentDepartment}
+        open={openDeleteDepartmentModal}
+        setOpen={setOpenDeleteDepartmentModal}
+        onClose={() => toogleDeleteDepartmentModal({ isOpen: false })}
+      />
+
       <Table>
         <TableHead>
           <TableRow className="border-b">
@@ -81,8 +101,8 @@ export default function DepartmentsTable() {
             <TableHeaderCell className="p-3">Email</TableHeaderCell>
             <TableHeaderCell className="p-3">Numéro tel</TableHeaderCell>
             <TableHeaderCell className="p-3">Numéro whatsapp</TableHeaderCell>
-            <TableHeaderCell className="p-3">Status</TableHeaderCell>
-            <TableHeaderCell className="p-3">Total d'activité</TableHeaderCell>
+            {/* <TableHeaderCell className="p-3">Status</TableHeaderCell> */}
+            <TableHeaderCell className="p-3">Nbre d'activités</TableHeaderCell>
             <TableHeaderCell className="p-3">Ajouté le</TableHeaderCell>
             <TableHeaderCell className="p-3">Actions</TableHeaderCell>
           </TableRow>
@@ -93,7 +113,10 @@ export default function DepartmentsTable() {
             {payload.map((department) => {
               const manager = department.users?.[0];
               return (
-                <TableRow key={department.id}>
+                <TableRow
+                  key={department.id}
+                  className="hover:bg-slate-50 transition ease-in-out cusror-pointer"
+                >
                   <TableCell className="p-3">{department.name}</TableCell>
                   <TableCell className="p-3">{department.slug}</TableCell>
                   <TableCell className="p-3">
@@ -110,7 +133,7 @@ export default function DepartmentsTable() {
                   <TableCell className="p-3">
                     {manager?.whatsappPhone || '--'}
                   </TableCell>
-                  <TableCell className="p-3">
+                  {/* <TableCell className="p-3">
                     {manager ? (
                       <Badge color={manager?.isActive ? 'green' : 'red'}>
                         {manager?.isActive ? 'Active' : 'Inactive'}
@@ -118,7 +141,7 @@ export default function DepartmentsTable() {
                     ) : (
                       '--'
                     )}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell className="p-3">
                     {department.activities.length}
                   </TableCell>
@@ -128,7 +151,8 @@ export default function DepartmentsTable() {
                   <TableCell>
                     <ActionsDropdown
                       department={department}
-                      toogleAddActivityModal={toogleAddActivityModal}
+                      onAddActivity={toogleAddActivityModal}
+                      onDeleteDepartment={toogleDeleteDepartmentModal}
                     />
                   </TableCell>
                 </TableRow>
@@ -147,22 +171,27 @@ export default function DepartmentsTable() {
   );
 }
 
-export function ActionsDropdown({
-  department,
-  toogleAddActivityModal
-}: {
+type ActionsDropdownProps = {
   department: DepartmentType;
-  toogleAddActivityModal: (args: {
+  onAddActivity: (args: {
     isOpen: boolean;
     department?: DepartmentType;
   }) => void;
-}) {
+  onDeleteDepartment: (args: {
+    isOpen: boolean;
+    department?: DepartmentType;
+  }) => void;
+};
+
+export function ActionsDropdown({
+  department,
+  onAddActivity,
+  onDeleteDepartment
+}: ActionsDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {/* <Button variant="outline" size="icon"> */}
         <MoreVertical className="h-4 w-4 text-primary" />
-        {/* </Button> */}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -173,14 +202,14 @@ export function ActionsDropdown({
             <span>Voir plus</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => toogleAddActivityModal({ isOpen: true, department })}
+            onClick={() => onAddActivity({ isOpen: true, department })}
           >
             <FileCheck className="mr-2 h-4 w-4" />
             <span>Ajouter une activité</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-
+        {/*  */}
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <PencilIcon className="mr-2 h-4 w-4" />
@@ -190,18 +219,20 @@ export function ActionsDropdown({
             <Settings className="mr-2 h-4 w-4" />
             <span>Editer le mot de passe</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <UserXIcon className="mr-2 h-4 w-4" />
             <span>Bloquer le compte</span>
-            {/* <DropdownMenuShortcut>⌘S</DropdownMenuShortcut> */}
+          </DropdownMenuItem> */}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={() => onDeleteDepartment({ isOpen: true, department })}
+          >
+            <TrashIcon className="mr-2 h-4 w-4" />
+            <span>Supprimer le department</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-
-        {/* <DropdownMenuItem>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

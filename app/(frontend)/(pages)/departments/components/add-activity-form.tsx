@@ -37,6 +37,8 @@ const addActivityFormSchema = z.object({
   // todo add valdation for dates
   startDate: z.date({ required_error: 'Date de début est obligatoire.' }),
   endDate: z.date({ required_error: 'Date de fin est obligatoire.' }),
+  // todo fix totalTarget validation
+  totalTarget: z.string({ required_error: 'Nombre cible est obligatoire.' }),
   manager: z.string().optional()
 });
 
@@ -58,7 +60,6 @@ export function AddActivityForm({
   });
 
   const queryClient = useQueryClient();
-
   const { mutate, isPending } = useGenericMutation<
     AddActivityFormValues,
     Activity
@@ -142,7 +143,7 @@ export function AddActivityForm({
                     initialFocus
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date < new Date()}
+                    // disabled={(date) => date < new Date()}
                   />
                 </PopoverContent>
               </Popover>
@@ -181,10 +182,28 @@ export function AddActivityForm({
                     initialFocus
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date < new Date()}
+                    // disabled={(date) => date < new Date()}
                   />
                 </PopoverContent>
               </Popover>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="totalTarget"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nombre cible</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="Enter le nombre cible"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage className="text-xs" />
             </FormItem>
           )}

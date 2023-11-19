@@ -56,7 +56,7 @@ export function useGenericQuery<ApiPayload, ApiResponse>({
   >;
 }) {
   return useQuery({
-    queryKey: [queryKey, { ...requestData?.queryParams }],
+    queryKey: [queryKey, { ...requestData?.queryParams, ...requestData?.body }],
     queryFn: () => queryFn<ApiPayload, ApiResponse>(requestData),
     // suspense: true, // todo fixme
     retry: REACT_QUERY_RETRY,

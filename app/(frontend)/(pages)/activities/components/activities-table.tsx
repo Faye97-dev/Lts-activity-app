@@ -10,7 +10,7 @@ import {
   Text
 } from '@tremor/react';
 import { API_ACTIVITIES_LIST } from 'config/api-endpoints.config';
-import { Activity, Department, User } from 'db/schema';
+import { Activity, Department, Timeline, User } from 'db/schema';
 import { MoreVertical, PackageOpen, PencilIcon } from 'lucide-react';
 import {
   DropdownMenu,
@@ -23,7 +23,11 @@ import { useState } from 'react';
 import EditActivityModal from './edit-activity-modal';
 import { useSession } from 'next-auth/react';
 
-type ActivityType = Activity & { createdAt: string; department: Department };
+type ActivityType = Activity & {
+  createdAt: string;
+  timeline: Timeline[];
+  department: Department;
+};
 export default function ActivitiesTable() {
   const [openEditActivityModal, setOpenEditActivityModal] = useState(false);
   const [currentActivity, setCurrentActivity] = useState<ActivityType | null>(
@@ -80,7 +84,10 @@ export default function ActivitiesTable() {
             {payload.map((activity) => {
               // const manager = activity.users?.[0];
               return (
-                <TableRow key={activity.id}>
+                <TableRow
+                  key={activity.id}
+                  className="hover:bg-slate-50 transition ease-in-out cusror-pointer"
+                >
                   <TableCell className="p-3">{activity.name}</TableCell>
                   <TableCell className="p-3">
                     {activity.startDate?.split('T')?.[0]}
@@ -92,7 +99,9 @@ export default function ActivitiesTable() {
                     {activity.manager || '--'}
                   </TableCell>
                   <TableCell className="p-3">
-                    <Text>{activity.totalCreated || '--'}</Text>
+                    <Text>
+                      {activity.timeline?.[0]?.cumulativeTotalCreated || '--'}
+                    </Text>
                   </TableCell>
                   <TableCell className="p-3">
                     <Text>{activity.totalTarget || '--'}</Text>
