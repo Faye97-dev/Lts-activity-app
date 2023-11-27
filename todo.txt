@@ -9,26 +9,26 @@
 // delete activité , department + user ( cascade ) **
 
 Mon :
-- update password 
-- update profil user
-- edit department + user 
+- edit department + user **
 
 Tue :
-- details activité
-- delete activité
-- edit activité info in admin side 
+- details activité **
+- delete activité **
+- edit activité info in admin side **
 
 Wen :
 // remove avatar icon 
+// todo add pagination 
 // fix trucante long comment , comment optional 
 // update activity modal ( form inputs , modal title .... ) 
-// todo add pagination 
 
+// update password 
 // add auth , guards check in root layout
 // custom login page , and redirect to / when already logged in 
 // todo redirect to 403 page when user logged but haven't role grant ( export navigation )
 
 // clean todos !!
+// update profil user
 // todo add types definition ( remove any ) !! 
 
 ** backend 

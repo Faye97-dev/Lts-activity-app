@@ -17,7 +17,9 @@ import {
   PackageOpen,
   EyeIcon,
   PencilIcon,
-  FileCheck
+  FileCheck,
+  PlusIcon,
+  PlusCircleIcon
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -32,6 +34,8 @@ import { useState } from 'react';
 import AddActivityModal from './add-activity-modal';
 import { TrashIcon } from '@heroicons/react/solid';
 import DeleteDepartmentModal from './delete-department-modal';
+import ListActivitiesModal from './list-activities-modal';
+import EditDepartmentDrawer from './edit-department-drawer';
 
 type DepartmentType = Department & {
   activities: Activity[];
@@ -41,6 +45,9 @@ type DepartmentType = Department & {
 
 export default function DepartmentsTable() {
   const [openAddActivityModal, setOpenAddActivityModal] = useState(false);
+  const [openListActivitiesModal, setOpenListActivitiesModal] = useState(false);
+  const [openEditDepartmentDrawer, setOpenEditDepartmentDrawer] =
+    useState(false);
   const [openDeleteDepartmentModal, setOpenDeleteDepartmentModal] =
     useState(false);
   const [currentDepartment, setCurrentDepartment] =
@@ -59,6 +66,28 @@ export default function DepartmentsTable() {
     department?: DepartmentType;
   }) => {
     setOpenAddActivityModal(isOpen);
+    setCurrentDepartment(department || null);
+  };
+
+  const toogleEditDepartmentDrawer = ({
+    isOpen = false,
+    department = undefined
+  }: {
+    isOpen: boolean;
+    department?: DepartmentType;
+  }) => {
+    setOpenEditDepartmentDrawer(isOpen);
+    setCurrentDepartment(department || null);
+  };
+
+  const toogleListActivitiesModal = ({
+    isOpen = false,
+    department = undefined
+  }: {
+    isOpen: boolean;
+    department?: DepartmentType;
+  }) => {
+    setOpenListActivitiesModal(isOpen);
     setCurrentDepartment(department || null);
   };
 
@@ -85,11 +114,25 @@ export default function DepartmentsTable() {
         onClose={() => toogleAddActivityModal({ isOpen: false })}
       />
 
+      <ListActivitiesModal
+        open={openListActivitiesModal}
+        department={currentDepartment}
+        setOpen={setOpenListActivitiesModal}
+        onClose={() => toogleListActivitiesModal({ isOpen: false })}
+      />
+
       <DeleteDepartmentModal
         department={currentDepartment}
         open={openDeleteDepartmentModal}
         setOpen={setOpenDeleteDepartmentModal}
         onClose={() => toogleDeleteDepartmentModal({ isOpen: false })}
+      />
+
+      <EditDepartmentDrawer
+        department={currentDepartment}
+        open={openEditDepartmentDrawer}
+        setOpen={setOpenEditDepartmentDrawer}
+        onClose={() => toogleEditDepartmentDrawer({ isOpen: false })}
       />
 
       <Table>
@@ -152,6 +195,8 @@ export default function DepartmentsTable() {
                     <ActionsDropdown
                       department={department}
                       onAddActivity={toogleAddActivityModal}
+                      onListActivities={toogleListActivitiesModal}
+                      onEditDepartment={toogleEditDepartmentDrawer}
                       onDeleteDepartment={toogleDeleteDepartmentModal}
                     />
                   </TableCell>
@@ -171,21 +216,25 @@ export default function DepartmentsTable() {
   );
 }
 
+// todo move to types.ts
+type toggleModalActionType = (args: {
+  isOpen: boolean;
+  department?: DepartmentType;
+}) => void;
+
 type ActionsDropdownProps = {
   department: DepartmentType;
-  onAddActivity: (args: {
-    isOpen: boolean;
-    department?: DepartmentType;
-  }) => void;
-  onDeleteDepartment: (args: {
-    isOpen: boolean;
-    department?: DepartmentType;
-  }) => void;
+  onAddActivity: toggleModalActionType;
+  onDeleteDepartment: toggleModalActionType;
+  onEditDepartment: toggleModalActionType;
+  onListActivities: toggleModalActionType;
 };
 
 export function ActionsDropdown({
   department,
   onAddActivity,
+  onEditDepartment,
+  onListActivities,
   onDeleteDepartment
 }: ActionsDropdownProps) {
   return (
@@ -197,24 +246,37 @@ export function ActionsDropdown({
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <EyeIcon className="mr-2 h-4 w-4" />
-            <span>Voir plus</span>
-          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => onAddActivity({ isOpen: true, department })}
           >
-            <FileCheck className="mr-2 h-4 w-4" />
+            <PlusCircleIcon className="mr-2 h-4 w-4" />
             <span>Ajouter une activité</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => onListActivities({ isOpen: true, department })}
+          >
+            <FileCheck className="mr-2 h-4 w-4" />
+            <span>Liste des activités</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        {/*  */}
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => onEditDepartment({ isOpen: true, department })}
+          >
             <PencilIcon className="mr-2 h-4 w-4" />
-            <span>Editer le compte</span>
+            <span>Editer le department</span>
           </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-red-500"
+            onClick={() => onDeleteDepartment({ isOpen: true, department })}
+          >
+            <TrashIcon className="mr-2 h-4 w-4" />
+            <span>Supprimer le department</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
             <span>Editer le mot de passe</span>
@@ -223,15 +285,6 @@ export function ActionsDropdown({
             <UserXIcon className="mr-2 h-4 w-4" />
             <span>Bloquer le compte</span>
           </DropdownMenuItem> */}
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => onDeleteDepartment({ isOpen: true, department })}
-          >
-            <TrashIcon className="mr-2 h-4 w-4" />
-            <span>Supprimer le department</span>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
