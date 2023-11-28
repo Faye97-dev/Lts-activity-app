@@ -1,32 +1,35 @@
 import { registerNewUser } from "@/services/users.service";
 import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from "config/global.config";
 import { departments } from "db/schema";
-import { auth } from "lib/auth";
-import { db } from "db";
 
-/*
-{
-  "departmentName": "test",
-  "departmentSlug": "Ab",
-  "password" : "admin",
-  "firstName" :"dev",
-  "lastName" : "user",
-  "email" : "dev@gmail.com"
-}
-*/
+import { db } from "db";
+import { auth } from "lib/auth";
+import { addDepartmentSchema } from "app/(backend)/validators/departments.schema";
 
 export async function POST(request: Request) {
-    // todo add db transaction 
-    // todo add validation with zod 
     try {
-        const data = await request.json()
-        const department = await db.insert(departments).values({
-            name: data.departmentName, slug: data.departmentSlug
-        }).returning()
+        const session = await auth();
+        if (!session?.user || !session?.user?.token?.role)
+            return Response.json({ message: "Unauthorized" }, { status: 401 })
 
-        data.departmentId = department?.[0]?.id
-        const user = await registerNewUser(data)
-        return Response.json({ ...user, department: department?.[0] }, { status: 201 })
+        const data = await request.json()
+        const userRole = session.user.token.role.slug
+        const response = addDepartmentSchema.safeParse(data);
+
+        if (response.success) {
+            if (userRole === ROLE_SUPER_ADMIN) {
+                // todo add db transaction 
+                const { departmentName, departmentSlug, ...rest } = response.data
+                const departmentPayload = { name: departmentName, slug: departmentSlug }
+                const department = await db.insert(departments).values(departmentPayload).returning()
+                const user = await registerNewUser({ ...rest, departmentId: department?.[0]?.id })
+
+                return Response.json({ ...user, department: department?.[0] }, { status: 201 })
+            }
+            return Response.json({ message: "Unauthorized" }, { status: 403 })
+        } else {
+            return Response.json({ message: "Bad request", errors: response.error.issues }, { status: 422 })
+        }
     } catch (e) {
         console.log(e)
         return Response.json({ message: "Bad request" }, { status: 400 })

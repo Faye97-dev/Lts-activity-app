@@ -1,10 +1,11 @@
-import { ROLE_DEFAULT, ROLE_SUPER_ADMIN } from "config/global.config";
 import { activities, timeline } from "db/schema"
 import { eq } from "drizzle-orm"
 import { db } from "db";
 
-// todo add types 
-export const addActivity = async ({ userRole, data }: any) => {
+import { AddActivityType, UpdateActivityType } from "../validators/activities.schema";
+import { ROLE_DEFAULT, ROLE_SUPER_ADMIN } from "config/global.config";
+
+export const addActivity = async ({ userRole, data }: { userRole: string; data: AddActivityType }) => {
     if (userRole === ROLE_SUPER_ADMIN) {
         const activity = await db.insert(activities).values({
             name: data.name,
@@ -19,7 +20,7 @@ export const addActivity = async ({ userRole, data }: any) => {
     return false
 }
 
-export const updateActivity = async ({ userRole, data, params }: any) => {
+export const updateActivity = async ({ userRole, data, params }: { userRole: string; data: UpdateActivityType, params: { id: string } }) => {
     if (userRole === ROLE_SUPER_ADMIN) {
         const updatedActivity = await db.update(activities)
             .set({
@@ -43,12 +44,14 @@ export const updateActivity = async ({ userRole, data, params }: any) => {
             orderBy: (timeline, { desc }) => [desc(timeline.createdAt)],
             where: (timeline, { eq }) => eq(timeline.activityId, params.id),
         })
+        const cumulativeTotalCreated = timelines?.length
+            ? parseInt(timelines[0].cumulativeTotalCreated) + parseInt(data?.totalCreated || "0")
+            : parseInt(data?.totalCreated || "0")
 
-        const cumulativeTotalCreated = timelines?.length ? parseInt(timelines[0].cumulativeTotalCreated) + parseInt(data.totalCreated) : parseInt(data.totalCreated)
         await db.insert(timeline).values({
             activityId: params.id,
-            comment: data.comment || "",
-            totalCreated: data.totalCreated,
+            comment: data?.comment || "",
+            totalCreated: data?.totalCreated || "",
             cumulativeTotalCreated: cumulativeTotalCreated.toString(),
         })
         return updatedActivity?.[0]

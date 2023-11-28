@@ -1,31 +1,31 @@
 import { updateActivity } from "@/services/activities.service";
 import { ROLE_SUPER_ADMIN } from "config/global.config";
 import { activities, timeline } from "db/schema";
-import { eq } from "drizzle-orm";
-import { auth } from "lib/auth";
-import { db } from "db";
 
-/*
-{
-  "totalCreated":90,
-  "totalTarget": 100,
-  "comment" : "Hellooo"
-} 
-*/
+import { db } from "db";
+import { auth } from "lib/auth";
+import { eq } from "drizzle-orm";
+import { updateActivitySchema } from "app/(backend)/validators/activities.schema";
+
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
     try {
         // todo add db transaction 
-        // todo add validation with zod 
         const session = await auth();
         if (!session?.user || !session?.user?.token?.role)
             return Response.json({ message: "Unauthorized" }, { status: 401 })
 
         const data = await request.json()
-        const userRole = session.user.token.role.slug
+        const response = updateActivitySchema.safeParse(data);
 
-        const updatedActivity = await updateActivity({ userRole, data, params })
-        if (updatedActivity) return Response.json(updatedActivity, { status: 200 })
-        return Response.json({ message: "Unauthorized" }, { status: 403 })
+        if (response.success) {
+            const userRole = session.user.token.role.slug
+            const updatedActivity = await updateActivity({ userRole, data: response.data, params })
+            if (updatedActivity) return Response.json(updatedActivity, { status: 200 })
+
+            return Response.json({ message: "Unauthorized" }, { status: 403 })
+        } else {
+            return Response.json({ message: "Bad request", errors: response.error.issues }, { status: 422 })
+        }
     } catch (e) {
         console.log(e)
         return Response.json({ message: "Bad request" }, { status: 400 })

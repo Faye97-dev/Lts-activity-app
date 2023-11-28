@@ -1,13 +1,17 @@
+import { KpisSchemaType } from "@/api/kpis/route";
 import { db } from "db";
+import { Timeline } from "db/schema";
 
-// todo add types
 // todo add comments
-const groupByTimebyDate = (timeline: any, departmentId: string) => {
+
+type TimelineKpisType = { id: string; createdAt: string; activityId: string; totalCreated: string; departmentId: string; }
+
+const groupByTimebyDate = (timeline: Timeline[], departmentId: string) => {
     // ? timeline should ordered in asc by created at !!
     let groupByDate = ""
-    let updatedTimeline: any = {}
+    let updatedTimeline: Record<string, TimelineKpisType> = {}
 
-    timeline.map((item: any) => {
+    timeline.map((item: Timeline) => {
         const itemDate = item?.createdAt?.toISOString()?.split('T')[0] || ""
         if (itemDate && itemDate === groupByDate) {
             updatedTimeline[groupByDate].totalCreated = updatedTimeline[groupByDate].totalCreated + item.totalCreated
@@ -18,23 +22,23 @@ const groupByTimebyDate = (timeline: any, departmentId: string) => {
         }
     })
 
-    return updatedTimeline = Object.values(updatedTimeline)
+    return Object.values(updatedTimeline)
 }
 
-const mergeTimelines = (timelines: any[][]) => {
+const mergeTimelines = (timelines: TimelineKpisType[][]) => {
     const flattenTimelines = timelines.reduce((prev, next) => prev.concat(next))
 
-    const trackedDates: any[] = []
-    const mergedTimelines: any[] = []
+    const trackedDates: string[] = []
+    const mergedTimelines: TimelineKpisType[] = []
 
-    flattenTimelines.map((item: any) => {
+    flattenTimelines.map((item: TimelineKpisType) => {
         if (!trackedDates.includes(item.createdAt)) {
-            const filteredTimelineByDate = flattenTimelines.filter((timeline: any) => timeline.createdAt === item.createdAt)
+            const filteredTimelineByDate = flattenTimelines.filter((timeline: TimelineKpisType) => timeline.createdAt === item.createdAt)
 
             const totalCreated = filteredTimelineByDate.reduce((accumulator, timeline) => {
                 const currentValue = parseInt(timeline.totalCreated)
                 return accumulator + currentValue
-            }, 0)
+            }, 0).toString()
 
             trackedDates.push(item.createdAt)
             mergedTimelines.push({ ...item, totalCreated })
@@ -44,19 +48,19 @@ const mergeTimelines = (timelines: any[][]) => {
     return mergedTimelines
 }
 
-const generateCumulativeTotalCreated = (timeline: any) => {
+const generateCumulativeTotalCreated = (timeline: TimelineKpisType[]) => {
     let prevCumulativeTotalCreated = 0
-    return timeline.map((item: any) => {
-        const newItem = { ...item, cumulativeTotalCreated: item.totalCreated + prevCumulativeTotalCreated }
+    return timeline.map((item: TimelineKpisType) => {
+        const newItem = { ...item, cumulativeTotalCreated: parseInt(item.totalCreated) + prevCumulativeTotalCreated }
         prevCumulativeTotalCreated = newItem.cumulativeTotalCreated
         return newItem
     })
 }
 
 
-export const getActivitiesKpis = async (data: any) => {
+export const getActivitiesKpis = async (data: KpisSchemaType) => {
     const activity = await db.query.activities.findFirst({
-        where: (activities, { eq }) => eq(activities.id, data.activity_id),
+        where: (activities, { eq }) => eq(activities.id, data.activity_id || ""),
         with: {
             timeline: {
                 orderBy: (timeline, { desc }) => [desc(timeline.createdAt)],
@@ -85,9 +89,9 @@ export const getActivitiesKpis = async (data: any) => {
 }
 
 
-export const getDepartmentKpis = async (data: any) => {
+export const getDepartmentKpis = async (data: KpisSchemaType) => {
     const department = await db.query.departments.findFirst({
-        where: (departments, { eq }) => eq(departments.id, data.department_id),
+        where: (departments, { eq }) => eq(departments.id, data.department_id || ""),
         with: {
             activities: {
                 with: {
@@ -114,7 +118,7 @@ export const getDepartmentKpis = async (data: any) => {
     }, 0)
 
     //
-    let departementTimelines: any[][] = department.activities.map(activity => {
+    let departementTimelines: TimelineKpisType[][] = department.activities.map(activity => {
         return groupByTimebyDate(activity?.timeline?.reverse() || [], activity.departmentId)
     })
     let timeline = mergeTimelines(departementTimelines)
@@ -171,7 +175,7 @@ export const getKpis = async () => {
     }, 0)
 
     //
-    let timelines: any[][] = []
+    let timelines: TimelineKpisType[][] = []
     departments.map(department => {
         department.activities.map(activity => {
             timelines.push(groupByTimebyDate(activity?.timeline?.reverse() || [], activity.departmentId))

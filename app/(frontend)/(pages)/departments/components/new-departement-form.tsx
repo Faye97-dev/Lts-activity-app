@@ -13,13 +13,6 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
 import { Department, Role, User } from 'db/schema';
 import { Button } from '@tremor/react';
@@ -51,7 +44,6 @@ const newDepartmentFormSchema = z.object({
   email: z
     .string({ required_error: 'Email est obligatoire.' })
     .email('Email non valide.'),
-  // roleId: z.string({ required_error: 'Role est obligatoire.' }),
   // todo add validation confirm password
   password: z.string({ required_error: 'Mot de passe est obligatoire.' }),
   confirmPassword: z.string({
@@ -89,7 +81,7 @@ export function NewDepartementForm({
   function onSubmit(formValues: NewDepartmentFormValues) {
     const paylaod = {
       ...formValues,
-      roleId: roles.find((role) => role.slug == ROLE_DEFAULT)?.id
+      roleId: roles.find((role) => role.slug == ROLE_DEFAULT)?.id // todo improve
     };
 
     mutate(
@@ -129,10 +121,6 @@ export function NewDepartementForm({
                 <FormControl>
                   <Input placeholder="Enter le nom du departement" {...field} />
                 </FormControl>
-                {/* <FormDescription>
-                This is your public display name. It can be your real name or a
-                pseudonym. You can only change this once every 30 days.
-              </FormDescription> */}
                 <FormMessage className="text-xs" />
               </FormItem>
             )}

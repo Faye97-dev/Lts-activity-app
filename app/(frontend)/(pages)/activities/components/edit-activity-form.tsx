@@ -21,13 +21,12 @@ import { toast } from '@/components/ui/use-toast';
 import { CheckCircle } from 'lucide-react';
 
 // todo fix validation
-const addActivityFormSchema = z.object({
+const editActivityFormSchema = z.object({
   totalCreated: z.string({ required_error: 'Nombre crée est obligatoire.' }),
-  // .min(0, { message: 'Nombre crée invalide.' }),
   comment: z.string().optional()
 });
 
-type EditActivityFormValues = z.infer<typeof addActivityFormSchema>;
+type EditActivityFormValues = z.infer<typeof editActivityFormSchema>;
 
 export function EditActivityForm({
   onClose,
@@ -39,7 +38,7 @@ export function EditActivityForm({
   const defaultValues: Partial<EditActivityFormValues> = {};
 
   const form = useForm<EditActivityFormValues>({
-    resolver: zodResolver(addActivityFormSchema),
+    resolver: zodResolver(editActivityFormSchema),
     defaultValues,
     mode: 'onChange'
   });

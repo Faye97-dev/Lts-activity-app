@@ -1,20 +1,25 @@
 import { deleteDepartment, updateDepartment } from "@/services/departments.service";
+import { updateDepartmentSchema } from "app/(backend)/validators/departments.schema";
 import { auth } from "lib/auth";
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
     try {
-        // todo add db transaction 
-        // todo add validation with zod 
         const session = await auth();
         if (!session?.user || !session?.user?.token?.role)
             return Response.json({ message: "Unauthorized" }, { status: 401 })
 
         const data = await request.json()
         const userRole = session.user.token.role.slug
+        const response = updateDepartmentSchema.safeParse(data);
 
-        const updatedDepartment = await updateDepartment({ userRole, data, params })
-        if (updatedDepartment) return Response.json(updatedDepartment, { status: 200 })
-        return Response.json({ message: "Unauthorized" }, { status: 403 })
+        if (response.success) {
+            // todo add db transaction 
+            const updatedDepartment = await updateDepartment({ userRole, data: response.data, params })
+            if (updatedDepartment) return Response.json(updatedDepartment, { status: 200 })
+            return Response.json({ message: "Unauthorized" }, { status: 403 })
+        } else {
+            return Response.json({ message: "Bad request", errors: response.error.issues }, { status: 422 })
+        }
     } catch (e) {
         console.log(e)
         return Response.json({ message: "Bad request" }, { status: 400 })

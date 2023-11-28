@@ -2,18 +2,18 @@ import { ROLE_SUPER_ADMIN } from "config/global.config";
 import { activities, departments, timeline, users } from "db/schema"
 import { eq, inArray } from "drizzle-orm"
 import { db } from "db";
+import { UpdateDepartmentType } from "../validators/departments.schema";
 
-// todo add types 
-export const updateDepartment = async ({ userRole, data, params }: any) => {
+export const updateDepartment = async ({ userRole, data, params }: { userRole: string; data: UpdateDepartmentType, params: { id: string } }) => {
     if (userRole === ROLE_SUPER_ADMIN) {
-        const { departmentName, departmentSlug, email, phone, isActive, lastName, firstName, whatsappPhone } = data
+        const { departmentName, departmentSlug, email, phone, lastName, firstName, whatsappPhone } = data
         const department = await db.update(departments)
             .set({ name: departmentName, slug: departmentSlug })
             .where(eq(departments.id, params.id))
             .returning()
 
         const updatedUser = await db.update(users)
-            .set({ email, phone, isActive, lastName, firstName, whatsappPhone })
+            .set({ email, phone, lastName, firstName, whatsappPhone })
             .where(eq(users.id, data.userId))
             .returning();
 
@@ -22,7 +22,7 @@ export const updateDepartment = async ({ userRole, data, params }: any) => {
     return false
 }
 
-export const deleteDepartment = async ({ userRole, params }: any) => {
+export const deleteDepartment = async ({ userRole, params }: { userRole: string; params: { id: string } }) => {
     if (userRole === ROLE_SUPER_ADMIN) {
         await db.delete(departments).where(eq(departments.id, params.id))
         await db.delete(users).where(eq(users.departmentId, params.id))

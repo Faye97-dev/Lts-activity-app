@@ -30,12 +30,12 @@ import { cn } from 'lib/utils';
 import { Button as ButtonShadcn } from '@/components/ui/button';
 
 // todo fix validation
-const addActivityFormSchema = z.object({
+const editActivityFormSchema = z.object({
   name: z
     .string({ required_error: "Titre de l'activité est obligatoire." })
     .min(2, { message: "Titre de l'activité du departement trop court." })
     .max(60, { message: "Titre de l'activité du departement trop long." }),
-  // todo add valdation for dates
+  // todo add validation for dates
   startDate: z.date({ required_error: 'Date de début est obligatoire.' }),
   endDate: z.date({ required_error: 'Date de fin est obligatoire.' }),
   // todo fix totalTarget validation
@@ -43,7 +43,7 @@ const addActivityFormSchema = z.object({
   manager: z.string().optional()
 });
 
-type EditActivityFormValues = z.infer<typeof addActivityFormSchema>;
+type EditActivityFormValues = z.infer<typeof editActivityFormSchema>;
 
 export function EditActivityForm({
   onClose,
@@ -55,15 +55,15 @@ export function EditActivityForm({
   const defaultValues: Partial<EditActivityFormValues> = {
     startDate: activity ? new Date(activity.startDate) : undefined,
     endDate: activity ? new Date(activity.endDate) : undefined,
+    manager: activity?.manager || '',
     name: activity?.name || '',
     totalTarget: activity?.totalTarget
       ? activity.totalTarget.toString()
-      : undefined,
-    manager: activity?.manager || ''
+      : undefined
   };
 
   const form = useForm<EditActivityFormValues>({
-    resolver: zodResolver(addActivityFormSchema),
+    resolver: zodResolver(editActivityFormSchema),
     defaultValues,
     mode: 'onChange'
   });
