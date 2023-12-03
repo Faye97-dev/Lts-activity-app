@@ -18,7 +18,7 @@ export default async function KpisPage() {
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>Tableau de bord stage</Title>
+      <Title>Tableau de bord State</Title>
       <TabGroup className="mt-4">
         <TabList>
           <Tab>Statistiques</Tab>
