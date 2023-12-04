@@ -1,14 +1,9 @@
-import { redirect } from "next/navigation"
 import { Badge, Tab, TabGroup, TabList, TabPanel, TabPanels, Title } from "@tremor/react"
 import { db } from "db"
-import { auth } from "lib/auth"
 
 import KpisTabpanel from "../../components/kpis-tabpanel"
 
 export default async function ActivityKpisPage({ params }: { params: { id: string } }) {
-  const session = await auth()
-  if (!session?.user) redirect("/api/auth/signin") // todo update to /login
-
   const activity = await db.query.activities.findFirst({
     where: (activities, { eq }) => eq(activities.id, params.id),
   })

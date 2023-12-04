@@ -1,15 +1,10 @@
-import { redirect } from "next/navigation"
 import { Badge, Tab, TabGroup, TabList, TabPanel, TabPanels, Title } from "@tremor/react"
 import { db } from "db"
-import { auth } from "lib/auth"
 
 import ActivitiesTable from "../../components/activities-table"
 import KpisTabpanel from "../../components/kpis-tabpanel"
 
 export default async function DepartmentKpisPage({ params }: { params: { id: string } }) {
-  const session = await auth()
-  if (!session?.user) redirect("/api/auth/signin") // todo update to /login
-
   const department = await db.query.departments.findFirst({
     where: (departments, { eq }) => eq(departments.id, params.id),
   })
