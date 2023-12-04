@@ -58,8 +58,8 @@ export default function ActivitiesTable() {
   return (
     <>
       <EditActivityModal
-        open={openEditActivityModal}
         activity={currentActivity}
+        open={openEditActivityModal}
         setOpen={setOpenEditActivityModal}
         onClose={() => toogleEditActivityModal(false)}
       />

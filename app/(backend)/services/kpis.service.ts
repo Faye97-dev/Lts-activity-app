@@ -1,9 +1,8 @@
-import { KpisSchemaType } from "@/api/kpis/route";
 import { db } from "db";
 import { Timeline } from "db/schema";
+import { KpisSchemaType } from "@/validators/kpi.schema";
 
 // todo add comments
-
 type TimelineKpisType = { id: string; createdAt: string; activityId: string; totalCreated: string; departmentId: string; }
 
 const groupByTimebyDate = (timeline: Timeline[], departmentId: string) => {

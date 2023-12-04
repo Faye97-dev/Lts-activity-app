@@ -36,7 +36,7 @@ export const authConfig = {
     ],
     callbacks: {
         async session({ session, token }) {
-            session.user.token = token
+            session.user.token = token // todo fixme
             return session
         },
         jwt: async ({ user, token }) => {

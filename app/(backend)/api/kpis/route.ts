@@ -1,13 +1,8 @@
+import { auth } from "lib/auth";
+import { kpisSchema } from "@/validators/kpi.schema";
 import { getActivitiesKpis, getDepartmentKpis, getKpis } from "@/services/kpis.service";
 import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from "config/global.config";
-import { auth } from "lib/auth";
-import * as z from 'zod';
 
-const kpisSchema = z.object({
-    activity_id: z.string().optional(),
-    department_id: z.string().optional(),
-});
-export type KpisSchemaType = z.infer<typeof kpisSchema>;
 
 export async function POST(request: Request) {
     try {
