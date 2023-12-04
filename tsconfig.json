@@ -4,10 +4,10 @@
     "paths": {
       "@/components/*": ["app/(frontend)/components/*"],
       "@/hooks/*": ["app/(frontend)/hooks/*"],
-      "@/store/*": ["app/(frontend)/store/*"],
-      "@/utils/*": ["app/(frontend)/utils/*"],
+      "@/dto/*": ["app/(backend)/dto/*"],
+      "@/repositories/*": ["app/(backend)/repositories/*"],
       "@/services/*": ["app/(backend)/services/*"],
-      "@/api/*": ["app/(backend)/api/*"],
+      "@/validators/*": ["app/(backend)/validators/*"],
     },
     "target": "ES6",
     "lib": ["dom", "dom.iterable", "esnext"],
