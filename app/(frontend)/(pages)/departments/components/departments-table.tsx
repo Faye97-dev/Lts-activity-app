@@ -136,7 +136,7 @@ export default function DepartmentsTable() {
             <TableHeaderCell className="p-3">Numéro tel</TableHeaderCell>
             <TableHeaderCell className="p-3">Numéro whatsapp</TableHeaderCell>
             {/* <TableHeaderCell className="p-3">Status</TableHeaderCell> */}
-            <TableHeaderCell className="p-3">Nbre d'activités</TableHeaderCell>
+            <TableHeaderCell className="p-3">Nbre d&apos;activités</TableHeaderCell>
             <TableHeaderCell className="p-3">Ajouté le</TableHeaderCell>
             <TableHeaderCell className="p-3">Actions</TableHeaderCell>
           </TableRow>

@@ -135,11 +135,11 @@ export function ActionsDropdown({ activity, onEditActivity, onDeleteActivity }: 
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => onEditActivity({ isOpen: true, activity })}>
             <PencilIcon className="mr-2 h-4 w-4" />
-            <span>Editer l'activité</span>
+            <span>Editer l&apos;activité</span>
           </DropdownMenuItem>
           <DropdownMenuItem className="text-red-500" onClick={() => onDeleteActivity({ isOpen: true, activity })}>
             <TrashIcon className="mr-2 h-4 w-4" />
-            <span>Supprimer l'activité</span>
+            <span>Supprimer l&apos;activité</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

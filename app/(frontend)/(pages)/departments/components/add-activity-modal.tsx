@@ -16,7 +16,7 @@ export default function AddActivityModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Ajout d'une activité</DialogTitle>
+          <DialogTitle>Ajout d&apos;une activité</DialogTitle>
           <DialogDescription>
             <AddActivityForm onClose={onClose} department={department} />
           </DialogDescription>

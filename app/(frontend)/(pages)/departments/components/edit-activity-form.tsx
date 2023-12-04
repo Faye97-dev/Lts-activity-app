@@ -98,7 +98,7 @@ export function EditActivityForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Titre de l'activité</FormLabel>
+              <FormLabel>Titre de l&apos;activité</FormLabel>
               <FormControl>
                 <Input placeholder="Enter un titre" {...field} />
               </FormControl>

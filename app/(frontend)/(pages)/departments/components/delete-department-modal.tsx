@@ -47,7 +47,7 @@ export default function DeleteDepartmentModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-red-600">Suppression d'un département</DialogTitle>
+          <DialogTitle className="text-red-600">Suppression d&apos;un département</DialogTitle>
           <DialogDescription>
             <div className="mt-6 flex flex-col gap-6">
               <Text>Vous êtes sur de vouloir supprimer ce département ?</Text>

@@ -123,7 +123,7 @@ export function ActionsDropdown({
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => toogleEditActivityModal(true, activity)}>
             <PencilIcon className="mr-2 h-4 w-4" />
-            <span>Editer l'activité</span>
+            <span>Editer l&apos;activité</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

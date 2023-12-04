@@ -17,7 +17,7 @@ export default function NewDepartmentDrawer({ roles }: { roles: Role[] }) {
       </SheetTrigger>
       <SheetContent className="sm:max-w-[700px] sm:w-[700px] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="border-b pb-4 text-xl">Ajout d'un nouveau departement</SheetTitle>
+          <SheetTitle className="border-b pb-4 text-xl">Ajout d&apos;un nouveau departement</SheetTitle>
           <SheetDescription>
             <NewDepartementForm roles={roles} onClose={() => setOpen(false)} />
           </SheetDescription>

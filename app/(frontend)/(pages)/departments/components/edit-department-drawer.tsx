@@ -18,7 +18,7 @@ export default function EditDepartmentDrawer({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="sm:max-w-[700px] sm:w-[700px] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="border-b pb-4 text-xl">Modification d'un nouveau departement</SheetTitle>
+          <SheetTitle className="border-b pb-4 text-xl">Modification d&apos;un nouveau departement</SheetTitle>
           <SheetDescription>
             <EditDepartementForm onClose={onClose} department={department} />
           </SheetDescription>

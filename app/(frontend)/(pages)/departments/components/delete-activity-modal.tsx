@@ -47,7 +47,7 @@ export default function DeleteActivityModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-red-600">Suppression d'une activité</DialogTitle>
+          <DialogTitle className="text-red-600">Suppression d&apos;une activité</DialogTitle>
           <DialogDescription>
             <div className="mt-6 flex flex-col gap-6">
               <Text>Vous êtes sur de vouloir supprimer cette activité ?</Text>
