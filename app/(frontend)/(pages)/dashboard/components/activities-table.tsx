@@ -1,41 +1,31 @@
-'use client';
-import { useGenericQuery } from '@/hooks/useApi';
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-  Text
-} from '@tremor/react';
-import { API_ACTIVITIES_LIST } from 'config/api-endpoints.config';
-import { Activity, Department, Timeline } from 'db/schema';
-import { PackageOpen } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+"use client"
+
+import { useRouter } from "next/navigation"
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from "@tremor/react"
+import { API_ACTIVITIES_LIST } from "config/api-endpoints.config"
+import { Activity, Department, Timeline } from "db/schema"
+import { PackageOpen } from "lucide-react"
+
+import { useGenericQuery } from "@/hooks/useApi"
 
 type ActivityType = Activity & {
-  createdAt: string;
-  timeline: Timeline[];
-  department: Department;
-};
-export default function ActivitiesTable({
-  department_id
-}: {
-  department_id: string;
-}) {
-  const router = useRouter();
+  createdAt: string
+  timeline: Timeline[]
+  department: Department
+}
+export default function ActivitiesTable({ department_id }: { department_id: string }) {
+  const router = useRouter()
   const { isLoading, data: payload } = useGenericQuery<null, ActivityType[]>({
-    queryKey: 'QUERY_ACTIVITIES_LIST',
+    queryKey: "QUERY_ACTIVITIES_LIST",
     requestData: {
-      method: 'GET',
+      method: "GET",
       url: API_ACTIVITIES_LIST,
-      queryParams: { department_id }
-    }
-  });
+      queryParams: { department_id },
+    },
+  })
 
   // todo add skeleton
-  if (isLoading) return 'En cours de chargement ...';
+  if (isLoading) return "En cours de chargement ..."
 
   return (
     <>
@@ -59,33 +49,21 @@ export default function ActivitiesTable({
                 <TableRow
                   key={activity.id}
                   className="hover:bg-slate-50 transition ease-in-out cusror-pointer"
-                  onClick={() =>
-                    router.push(`/dashboard/activity/${activity.id}`)
-                  }
+                  onClick={() => router.push(`/dashboard/activity/${activity.id}`)}
                 >
                   <TableCell className="p-3">{activity.name}</TableCell>
+                  <TableCell className="p-3">{activity.startDate?.split("T")?.[0]}</TableCell>
+                  <TableCell className="p-3">{activity.endDate?.split("T")?.[0]}</TableCell>
+                  <TableCell className="p-3">{activity.manager || "--"}</TableCell>
                   <TableCell className="p-3">
-                    {activity.startDate?.split('T')?.[0]}
+                    <Text>{activity.timeline?.[0]?.cumulativeTotalCreated || "--"}</Text>
                   </TableCell>
                   <TableCell className="p-3">
-                    {activity.endDate?.split('T')?.[0]}
+                    <Text>{activity.totalTarget || "--"}</Text>
                   </TableCell>
-                  <TableCell className="p-3">
-                    {activity.manager || '--'}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    <Text>
-                      {activity.timeline?.[0]?.cumulativeTotalCreated || '--'}
-                    </Text>
-                  </TableCell>
-                  <TableCell className="p-3">
-                    <Text>{activity.totalTarget || '--'}</Text>
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {activity.comment || '--'}
-                  </TableCell>
+                  <TableCell className="p-3">{activity.comment || "--"}</TableCell>
                 </TableRow>
-              );
+              )
             })}
           </TableBody>
         )}
@@ -97,5 +75,5 @@ export default function ActivitiesTable({
         </div>
       )}
     </>
-  );
+  )
 }

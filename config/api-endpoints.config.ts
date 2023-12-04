@@ -8,5 +8,3 @@ export const API_ADD_ACTIVITY = "/api/activities"
 export const API_EDIT_ACTIVITY = "/api/activities"
 export const API_DELETE_ACTIVITY = "/api/activities"
 export const API_KPIS = "/api/kpis"
-
-

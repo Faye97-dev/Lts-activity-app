@@ -1,59 +1,48 @@
-'use client';
-import { useGenericQuery } from '@/hooks/useApi';
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-  Text
-} from '@tremor/react';
-import { API_ACTIVITIES_LIST } from 'config/api-endpoints.config';
-import { Activity, Department, Timeline, User } from 'db/schema';
-import { MoreVertical, PackageOpen, PencilIcon } from 'lucide-react';
+"use client"
+
+import { useState } from "react"
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from "@tremor/react"
+import { API_ACTIVITIES_LIST } from "config/api-endpoints.config"
+import { Activity, Department, Timeline } from "db/schema"
+import { MoreVertical, PackageOpen, PencilIcon } from "lucide-react"
+import { useSession } from "next-auth/react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
-import EditActivityModal from './edit-activity-modal';
-import { useSession } from 'next-auth/react';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useGenericQuery } from "@/hooks/useApi"
+import EditActivityModal from "./edit-activity-modal"
 
 type ActivityType = Activity & {
-  createdAt: string;
-  timeline: Timeline[];
-  department: Department;
-};
+  createdAt: string
+  timeline: Timeline[]
+  department: Department
+}
 export default function ActivitiesTable() {
-  const [openEditActivityModal, setOpenEditActivityModal] = useState(false);
-  const [currentActivity, setCurrentActivity] = useState<ActivityType | null>(
-    null
-  );
+  const [openEditActivityModal, setOpenEditActivityModal] = useState(false)
+  const [currentActivity, setCurrentActivity] = useState<ActivityType | null>(null)
 
-  const { data: session } = useSession();
+  const { data: session } = useSession()
   const { isLoading, data: payload } = useGenericQuery<null, ActivityType[]>({
-    queryKey: 'QUERY_ACTIVITIES_LIST',
+    queryKey: "QUERY_ACTIVITIES_LIST",
     requestData: {
-      method: 'GET',
+      method: "GET",
       url: API_ACTIVITIES_LIST,
-      queryParams: { department_id: session?.user?.token?.departmentId || '' }
-    }
-  });
+      queryParams: { department_id: session?.user?.token?.departmentId || "" },
+    },
+  })
 
-  const toogleEditActivityModal = (
-    isOpen: boolean = false,
-    activity: ActivityType | null = null
-  ) => {
-    setOpenEditActivityModal(isOpen);
-    setCurrentActivity(activity);
-  };
+  const toogleEditActivityModal = (isOpen: boolean = false, activity: ActivityType | null = null) => {
+    setOpenEditActivityModal(isOpen)
+    setCurrentActivity(activity)
+  }
 
   // todo add skeleton
-  if (isLoading) return 'En cours de chargement ...';
+  if (isLoading) return "En cours de chargement ..."
 
   return (
     <>
@@ -84,42 +73,26 @@ export default function ActivitiesTable() {
             {payload.map((activity) => {
               // const manager = activity.users?.[0];
               return (
-                <TableRow
-                  key={activity.id}
-                  className="hover:bg-slate-50 transition ease-in-out cusror-pointer"
-                >
+                <TableRow key={activity.id} className="hover:bg-slate-50 transition ease-in-out cusror-pointer">
                   <TableCell className="p-3">{activity.name}</TableCell>
+                  <TableCell className="p-3">{activity.startDate?.split("T")?.[0]}</TableCell>
+                  <TableCell className="p-3">{activity.endDate?.split("T")?.[0]}</TableCell>
+                  <TableCell className="p-3">{activity.manager || "--"}</TableCell>
                   <TableCell className="p-3">
-                    {activity.startDate?.split('T')?.[0]}
+                    <Text>{activity.timeline?.[0]?.cumulativeTotalCreated || "--"}</Text>
                   </TableCell>
                   <TableCell className="p-3">
-                    {activity.endDate?.split('T')?.[0]}
+                    <Text>{activity.totalTarget || "--"}</Text>
                   </TableCell>
-                  <TableCell className="p-3">
-                    {activity.manager || '--'}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    <Text>
-                      {activity.timeline?.[0]?.cumulativeTotalCreated || '--'}
-                    </Text>
-                  </TableCell>
-                  <TableCell className="p-3">
-                    <Text>{activity.totalTarget || '--'}</Text>
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {activity.comment || '--'}
-                  </TableCell>
+                  <TableCell className="p-3">{activity.comment || "--"}</TableCell>
                   {/* <TableCell className="p-3">
                     {activity.createdAt?.split('T')?.[0]}
                   </TableCell> */}
                   <TableCell>
-                    <ActionsDropdown
-                      activity={activity}
-                      toogleEditActivityModal={toogleEditActivityModal}
-                    />
+                    <ActionsDropdown activity={activity} toogleEditActivityModal={toogleEditActivityModal} />
                   </TableCell>
                 </TableRow>
-              );
+              )
             })}
           </TableBody>
         )}
@@ -131,18 +104,15 @@ export default function ActivitiesTable() {
         </div>
       )}
     </>
-  );
+  )
 }
 
 export function ActionsDropdown({
   activity,
-  toogleEditActivityModal
+  toogleEditActivityModal,
 }: {
-  activity: ActivityType;
-  toogleEditActivityModal: (
-    isOpen: boolean,
-    activity: ActivityType | null
-  ) => void;
+  activity: ActivityType
+  toogleEditActivityModal: (isOpen: boolean, activity: ActivityType | null) => void
 }) {
   return (
     <DropdownMenu>
@@ -151,14 +121,12 @@ export function ActionsDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => toogleEditActivityModal(true, activity)}
-          >
+          <DropdownMenuItem onClick={() => toogleEditActivityModal(true, activity)}>
             <PencilIcon className="mr-2 h-4 w-4" />
             <span>Editer l'activité</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

@@ -1,73 +1,70 @@
-'use client';
+"use client"
 
-import { useGenericQuery } from '@/hooks/useApi';
-import { Card, Flex, Grid, Metric, MetricProps, Text } from '@tremor/react';
-import { API_KPIS } from 'config/api-endpoints.config';
-import { useMemo } from 'react';
-import { TimelineChart } from './timeline-chart';
-import { KpisPayloadType, MetricsCard } from 'types/types';
-import { AreaChart } from 'lucide-react';
+import { useMemo } from "react"
+import { Card, Flex, Grid, Metric, MetricProps, Text } from "@tremor/react"
+import { API_KPIS } from "config/api-endpoints.config"
+import { AreaChart } from "lucide-react"
+import { KpisPayloadType, MetricsCard } from "types/types"
+
+import { useGenericQuery } from "@/hooks/useApi"
+import { TimelineChart } from "./timeline-chart"
 
 const kpisTitleMapper: Record<string, string> = {
-  departmentCount: 'Total de departments',
+  departmentCount: "Total de departments",
   activitiesCount: "Total d'activités",
-  totalTarget: 'Total cible',
-  totalCreated: 'Total realisés'
-};
+  totalTarget: "Total cible",
+  totalCreated: "Total realisés",
+}
 
-const kpisColorMapper: Record<string, MetricProps['color']> = {
-  departmentCount: 'blue',
-  activitiesCount: 'pink',
-  totalTarget: 'yellow',
-  totalCreated: 'green'
-};
+const kpisColorMapper: Record<string, MetricProps["color"]> = {
+  departmentCount: "blue",
+  activitiesCount: "pink",
+  totalTarget: "yellow",
+  totalCreated: "green",
+}
 
 export default function KpisTabpanel({
   metricsCount,
   activity_id,
-  department_id
+  department_id,
 }: {
-  metricsCount: 4 | 3 | 2;
-  department_id?: string;
-  activity_id?: string;
+  metricsCount: 4 | 3 | 2
+  department_id?: string
+  activity_id?: string
 }) {
   const {
     isLoading,
     isError,
-    data: payload
+    data: payload,
   } = useGenericQuery<{}, KpisPayloadType>({
-    queryKey: 'QUERY_KPIS',
+    queryKey: "QUERY_KPIS",
     requestData: {
       url: API_KPIS,
-      method: 'POST',
-      body: activity_id
-        ? { activity_id }
-        : department_id
-        ? { department_id }
-        : {}
-    }
-  });
+      method: "POST",
+      body: activity_id ? { activity_id } : department_id ? { department_id } : {},
+    },
+  })
 
   const kpisData = useMemo(() => {
     if (!isLoading && payload) {
-      const kpis: MetricsCard[] = [];
+      const kpis: MetricsCard[] = []
       for (const [key, value] of Object.entries(payload.kpis)) {
         if (value || value == 0) {
           kpis.push({
             value,
             title: kpisTitleMapper[key],
-            color: kpisColorMapper[key]
-          });
+            color: kpisColorMapper[key],
+          })
         }
       }
-      return kpis;
+      return kpis
     }
-    return [];
-  }, [payload, isLoading]);
+    return []
+  }, [payload, isLoading])
 
   // todo add skeleton and error page
-  if (isLoading) return 'En cours de chargement ...';
-  if (isError) return 'Error ...';
+  if (isLoading) return "En cours de chargement ..."
+  if (isError) return "Error ..."
 
   return (
     <>
@@ -93,5 +90,5 @@ export default function KpisTabpanel({
         </div>
       )}
     </>
-  );
+  )
 }

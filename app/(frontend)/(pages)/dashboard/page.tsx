@@ -1,20 +1,13 @@
-import {
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Title
-} from '@tremor/react';
+import { redirect } from "next/navigation"
+import { Tab, TabGroup, TabList, TabPanel, TabPanels, Title } from "@tremor/react"
+import { auth } from "lib/auth"
 
-import KpisTabpanel from './components/kpis-tabpanel';
-import DepartmentsTable from './components/departments-table';
-import { auth } from 'lib/auth';
-import { redirect } from 'next/navigation';
+import DepartmentsTable from "./components/departments-table"
+import KpisTabpanel from "./components/kpis-tabpanel"
 
 export default async function KpisPage() {
-  const session = await auth();
-  if (!session?.user) redirect('/api/auth/signin'); // todo update to /login
+  const session = await auth()
+  if (!session?.user) redirect("/api/auth/signin") // todo update to /login
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
@@ -34,5 +27,5 @@ export default async function KpisPage() {
         </TabPanels>
       </TabGroup>
     </main>
-  );
+  )
 }

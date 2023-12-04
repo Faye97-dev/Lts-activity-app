@@ -1,6 +1,7 @@
-import { QueryParams } from "@/hooks/useApi"
-import { type ClassValue, clsx } from "clsx"
+import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+
+import { QueryParams } from "@/hooks/useApi"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

@@ -1,33 +1,23 @@
-'use client';
-import * as z from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { format } from 'date-fns';
-import { Activity } from 'db/schema';
-import { Button } from '@tremor/react';
-import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
-import { Calendar } from '@/components/ui/calendar';
-import { useGenericMutation } from '@/hooks/useApi';
-import { useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, CalendarIcon } from 'lucide-react';
-import { API_EDIT_ACTIVITY } from 'config/api-endpoints.config';
+"use client"
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
-import { cn } from 'lib/utils';
-import { Button as ButtonShadcn } from '@/components/ui/button';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
+import { Button } from "@tremor/react"
+import { API_EDIT_ACTIVITY } from "config/api-endpoints.config"
+import { format } from "date-fns"
+import { Activity } from "db/schema"
+import { cn } from "lib/utils"
+import { CalendarIcon, CheckCircle } from "lucide-react"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+
+import { Button as ButtonShadcn } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { toast } from "@/components/ui/use-toast"
+import { useGenericMutation } from "@/hooks/useApi"
 
 // todo fix validation
 const editActivityFormSchema = z.object({
@@ -36,81 +26,73 @@ const editActivityFormSchema = z.object({
     .min(2, { message: "Titre de l'activité du departement trop court." })
     .max(60, { message: "Titre de l'activité du departement trop long." }),
   // todo add validation for dates
-  startDate: z.date({ required_error: 'Date de début est obligatoire.' }),
-  endDate: z.date({ required_error: 'Date de fin est obligatoire.' }),
+  startDate: z.date({ required_error: "Date de début est obligatoire." }),
+  endDate: z.date({ required_error: "Date de fin est obligatoire." }),
   // todo fix totalTarget validation
-  totalTarget: z.string({ required_error: 'Nombre cible est obligatoire.' }),
-  manager: z.string().optional()
-});
+  totalTarget: z.string({ required_error: "Nombre cible est obligatoire." }),
+  manager: z.string().optional(),
+})
 
-type EditActivityFormValues = z.infer<typeof editActivityFormSchema>;
+type EditActivityFormValues = z.infer<typeof editActivityFormSchema>
 
 export function EditActivityForm({
   onClose,
-  activity
+  activity,
 }: {
-  onClose: () => void;
-  activity: any; // todo fixme
+  onClose: () => void
+  activity: any // todo fixme
 }) {
   const defaultValues: Partial<EditActivityFormValues> = {
     startDate: activity ? new Date(activity.startDate) : undefined,
     endDate: activity ? new Date(activity.endDate) : undefined,
-    manager: activity?.manager || '',
-    name: activity?.name || '',
-    totalTarget: activity?.totalTarget
-      ? activity.totalTarget.toString()
-      : undefined
-  };
+    manager: activity?.manager || "",
+    name: activity?.name || "",
+    totalTarget: activity?.totalTarget ? activity.totalTarget.toString() : undefined,
+  }
 
   const form = useForm<EditActivityFormValues>({
     resolver: zodResolver(editActivityFormSchema),
     defaultValues,
-    mode: 'onChange'
-  });
+    mode: "onChange",
+  })
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  const { mutate, isPending } = useGenericMutation<
-    EditActivityFormValues,
-    Activity
-  >();
+  const { mutate, isPending } = useGenericMutation<EditActivityFormValues, Activity>()
 
   function onSubmit(formValues: EditActivityFormValues) {
     const payload = {
-      ...formValues
-    };
+      ...formValues,
+    }
 
     mutate(
       {
-        url: API_EDIT_ACTIVITY + '/' + activity.id,
-        method: 'PUT',
-        body: payload
+        url: API_EDIT_ACTIVITY + "/" + activity.id,
+        method: "PUT",
+        body: payload,
       },
       {
         onSuccess: () => {
           toast({
-            variant: 'success',
+            variant: "success",
             description: (
               <div className="flex font-bold items-center gap-2">
                 <CheckCircle className="w-6 h-6" /> Opération reussi.
               </div>
-            )
-          });
-          onClose();
+            ),
+          })
+          onClose()
           queryClient.invalidateQueries({
-            queryKey: ['QUERY_DEPARTMENTS_LIST']
-          });
-        }
-      }
-    );
+            queryKey: ["QUERY_DEPARTMENTS_LIST"],
+          })
+        },
+      },
+    )
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-3 mt-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-3 mt-4">
         <FormField
           control={form.control}
           name="name"
@@ -136,16 +118,9 @@ export function EditActivityForm({
                   <FormControl>
                     <ButtonShadcn
                       variant="outline"
-                      className={cn(
-                        'w-full pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
+                      className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                     >
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Enter la date de début</span>
-                      )}
+                      {field.value ? format(field.value, "PPP") : <span>Enter la date de début</span>}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </ButtonShadcn>
                   </FormControl>
@@ -175,16 +150,9 @@ export function EditActivityForm({
                   <FormControl>
                     <ButtonShadcn
                       variant="outline"
-                      className={cn(
-                        'w-full pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
+                      className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                     >
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Enter la date de fin</span>
-                      )}
+                      {field.value ? format(field.value, "PPP") : <span>Enter la date de fin</span>}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </ButtonShadcn>
                   </FormControl>
@@ -211,11 +179,7 @@ export function EditActivityForm({
             <FormItem>
               <FormLabel>Nombre cible</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter le nombre cible"
-                  {...field}
-                />
+                <Input type="number" placeholder="Enter le nombre cible" {...field} />
               </FormControl>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -237,12 +201,7 @@ export function EditActivityForm({
         />
 
         <div className="flex justify-end gap-3 mt-4">
-          <Button
-            color="red"
-            type="button"
-            loading={isPending}
-            onClick={onClose}
-          >
+          <Button color="red" type="button" loading={isPending} onClick={onClose}>
             Annuler
           </Button>
 
@@ -252,5 +211,5 @@ export function EditActivityForm({
         </div>
       </form>
     </Form>
-  );
+  )
 }

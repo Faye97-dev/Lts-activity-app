@@ -1,26 +1,21 @@
-'use client';
-import { useGenericQuery } from '@/hooks/useApi';
+"use client"
+
+import { useState } from "react"
+import { TrashIcon } from "@heroicons/react/solid"
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from "@tremor/react"
+import { API_DEPARTMENTS_LIST } from "config/api-endpoints.config"
+import { Activity, Department, User } from "db/schema"
 import {
-  Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-  Text
-} from '@tremor/react';
-import { API_DEPARTMENTS_LIST } from 'config/api-endpoints.config';
-import { Activity, Department, User } from 'db/schema';
-import {
-  Settings,
+  EyeIcon,
+  FileCheck,
   MoreVertical,
   PackageOpen,
-  EyeIcon,
   PencilIcon,
-  FileCheck,
+  PlusCircleIcon,
   PlusIcon,
-  PlusCircleIcon
-} from 'lucide-react';
+  Settings,
+} from "lucide-react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,82 +23,78 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
-import AddActivityModal from './add-activity-modal';
-import { TrashIcon } from '@heroicons/react/solid';
-import DeleteDepartmentModal from './delete-department-modal';
-import ListActivitiesModal from './list-activities-modal';
-import EditDepartmentDrawer from './edit-department-drawer';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useGenericQuery } from "@/hooks/useApi"
+import AddActivityModal from "./add-activity-modal"
+import DeleteDepartmentModal from "./delete-department-modal"
+import EditDepartmentDrawer from "./edit-department-drawer"
+import ListActivitiesModal from "./list-activities-modal"
 
 type DepartmentType = Department & {
-  activities: Activity[];
-  createdAt: string;
-  users: User[];
-};
+  activities: Activity[]
+  createdAt: string
+  users: User[]
+}
 
 export default function DepartmentsTable() {
-  const [openAddActivityModal, setOpenAddActivityModal] = useState(false);
-  const [openListActivitiesModal, setOpenListActivitiesModal] = useState(false);
-  const [openEditDepartmentDrawer, setOpenEditDepartmentDrawer] =
-    useState(false);
-  const [openDeleteDepartmentModal, setOpenDeleteDepartmentModal] =
-    useState(false);
-  const [currentDepartment, setCurrentDepartment] =
-    useState<DepartmentType | null>(null);
+  const [openAddActivityModal, setOpenAddActivityModal] = useState(false)
+  const [openListActivitiesModal, setOpenListActivitiesModal] = useState(false)
+  const [openEditDepartmentDrawer, setOpenEditDepartmentDrawer] = useState(false)
+  const [openDeleteDepartmentModal, setOpenDeleteDepartmentModal] = useState(false)
+  const [currentDepartment, setCurrentDepartment] = useState<DepartmentType | null>(null)
 
   const { isLoading, data: payload } = useGenericQuery<null, DepartmentType[]>({
-    queryKey: 'QUERY_DEPARTMENTS_LIST',
-    requestData: { url: API_DEPARTMENTS_LIST, method: 'GET' }
-  });
+    queryKey: "QUERY_DEPARTMENTS_LIST",
+    requestData: { url: API_DEPARTMENTS_LIST, method: "GET" },
+  })
 
   const toogleAddActivityModal = ({
     isOpen = false,
-    department = undefined
+    department = undefined,
   }: {
-    isOpen: boolean;
-    department?: DepartmentType;
+    isOpen: boolean
+    department?: DepartmentType
   }) => {
-    setOpenAddActivityModal(isOpen);
-    setCurrentDepartment(department || null);
-  };
+    setOpenAddActivityModal(isOpen)
+    setCurrentDepartment(department || null)
+  }
 
   const toogleEditDepartmentDrawer = ({
     isOpen = false,
-    department = undefined
+    department = undefined,
   }: {
-    isOpen: boolean;
-    department?: DepartmentType;
+    isOpen: boolean
+    department?: DepartmentType
   }) => {
-    setOpenEditDepartmentDrawer(isOpen);
-    setCurrentDepartment(department || null);
-  };
+    setOpenEditDepartmentDrawer(isOpen)
+    setCurrentDepartment(department || null)
+  }
 
   const toogleListActivitiesModal = ({
     isOpen = false,
-    department = undefined
+    department = undefined,
   }: {
-    isOpen: boolean;
-    department?: DepartmentType;
+    isOpen: boolean
+    department?: DepartmentType
   }) => {
-    setOpenListActivitiesModal(isOpen);
-    setCurrentDepartment(department || null);
-  };
+    setOpenListActivitiesModal(isOpen)
+    setCurrentDepartment(department || null)
+  }
 
   const toogleDeleteDepartmentModal = ({
     isOpen = false,
-    department = undefined
+    department = undefined,
   }: {
-    isOpen: boolean;
-    department?: DepartmentType;
+    isOpen: boolean
+    department?: DepartmentType
   }) => {
-    setOpenDeleteDepartmentModal(isOpen);
-    setCurrentDepartment(department || null);
-  };
+    setOpenDeleteDepartmentModal(isOpen)
+    setCurrentDepartment(department || null)
+  }
 
   // todo add skeleton
-  if (isLoading) return 'En cours de chargement ...';
+  if (isLoading) return "En cours de chargement ..."
 
   return (
     <>
@@ -154,28 +145,17 @@ export default function DepartmentsTable() {
         {!!payload?.length && (
           <TableBody>
             {payload.map((department) => {
-              const manager = department.users?.[0];
+              const manager = department.users?.[0]
               return (
-                <TableRow
-                  key={department.id}
-                  className="hover:bg-slate-50 transition ease-in-out cusror-pointer"
-                >
+                <TableRow key={department.id} className="hover:bg-slate-50 transition ease-in-out cusror-pointer">
                   <TableCell className="p-3">{department.name}</TableCell>
                   <TableCell className="p-3">{department.slug}</TableCell>
+                  <TableCell className="p-3">{manager ? `${manager?.firstName} ${manager?.lastName}` : "--"}</TableCell>
                   <TableCell className="p-3">
-                    {manager
-                      ? `${manager?.firstName} ${manager?.lastName}`
-                      : '--'}
+                    <Text>{manager?.email || "--"}</Text>
                   </TableCell>
-                  <TableCell className="p-3">
-                    <Text>{manager?.email || '--'}</Text>
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {manager?.phone || '--'}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {manager?.whatsappPhone || '--'}
-                  </TableCell>
+                  <TableCell className="p-3">{manager?.phone || "--"}</TableCell>
+                  <TableCell className="p-3">{manager?.whatsappPhone || "--"}</TableCell>
                   {/* <TableCell className="p-3">
                     {manager ? (
                       <Badge color={manager?.isActive ? 'green' : 'red'}>
@@ -185,12 +165,8 @@ export default function DepartmentsTable() {
                       '--'
                     )}
                   </TableCell> */}
-                  <TableCell className="p-3">
-                    {department.activities.length}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {department.createdAt?.split('T')?.[0]}
-                  </TableCell>
+                  <TableCell className="p-3">{department.activities.length}</TableCell>
+                  <TableCell className="p-3">{department.createdAt?.split("T")?.[0]}</TableCell>
                   <TableCell>
                     <ActionsDropdown
                       department={department}
@@ -201,7 +177,7 @@ export default function DepartmentsTable() {
                     />
                   </TableCell>
                 </TableRow>
-              );
+              )
             })}
           </TableBody>
         )}
@@ -213,29 +189,26 @@ export default function DepartmentsTable() {
         </div>
       )}
     </>
-  );
+  )
 }
 
 // todo move to types.ts
-type toggleModalActionType = (args: {
-  isOpen: boolean;
-  department?: DepartmentType;
-}) => void;
+type toggleModalActionType = (args: { isOpen: boolean; department?: DepartmentType }) => void
 
 type ActionsDropdownProps = {
-  department: DepartmentType;
-  onAddActivity: toggleModalActionType;
-  onDeleteDepartment: toggleModalActionType;
-  onEditDepartment: toggleModalActionType;
-  onListActivities: toggleModalActionType;
-};
+  department: DepartmentType
+  onAddActivity: toggleModalActionType
+  onDeleteDepartment: toggleModalActionType
+  onEditDepartment: toggleModalActionType
+  onListActivities: toggleModalActionType
+}
 
 export function ActionsDropdown({
   department,
   onAddActivity,
   onEditDepartment,
   onListActivities,
-  onDeleteDepartment
+  onDeleteDepartment,
 }: ActionsDropdownProps) {
   return (
     <DropdownMenu>
@@ -246,31 +219,22 @@ export function ActionsDropdown({
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => onAddActivity({ isOpen: true, department })}
-          >
+          <DropdownMenuItem onClick={() => onAddActivity({ isOpen: true, department })}>
             <PlusCircleIcon className="mr-2 h-4 w-4" />
             <span>Ajouter une activité</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => onListActivities({ isOpen: true, department })}
-          >
+          <DropdownMenuItem onClick={() => onListActivities({ isOpen: true, department })}>
             <FileCheck className="mr-2 h-4 w-4" />
             <span>Liste des activités</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => onEditDepartment({ isOpen: true, department })}
-          >
+          <DropdownMenuItem onClick={() => onEditDepartment({ isOpen: true, department })}>
             <PencilIcon className="mr-2 h-4 w-4" />
             <span>Editer le department</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-red-500"
-            onClick={() => onDeleteDepartment({ isOpen: true, department })}
-          >
+          <DropdownMenuItem className="text-red-500" onClick={() => onDeleteDepartment({ isOpen: true, department })}>
             <TrashIcon className="mr-2 h-4 w-4" />
             <span>Supprimer le department</span>
           </DropdownMenuItem>
@@ -288,5 +252,5 @@ export function ActionsDropdown({
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

@@ -1,64 +1,52 @@
-'use client';
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-  Text
-} from '@tremor/react';
-import { Activity, Department, User } from 'db/schema';
-import { MoreVertical, PackageOpen, PencilIcon, TrashIcon } from 'lucide-react';
+"use client"
+
+import { useState } from "react"
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from "@tremor/react"
+import { Activity, Department, User } from "db/schema"
+import { MoreVertical, PackageOpen, PencilIcon, TrashIcon } from "lucide-react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
-import DeleteActivityModal from './delete-activity-modal';
-import EditActivityModal from './edit-activity-modal';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import DeleteActivityModal from "./delete-activity-modal"
+import EditActivityModal from "./edit-activity-modal"
 
 type DepartmentType = Department & {
-  activities: Activity[];
-  createdAt: string;
-  users: User[];
-};
+  activities: Activity[]
+  createdAt: string
+  users: User[]
+}
 
-export default function ActivitiesList({
-  department,
-  onClose
-}: {
-  department: DepartmentType;
-  onClose: () => void;
-}) {
-  const [openEditActivityModal, setOpenEditActivityModal] = useState(false);
-  const [openDeleteActivityModal, setOpenDeleteActivityModal] = useState(false);
-  const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
+export default function ActivitiesList({ department, onClose }: { department: DepartmentType; onClose: () => void }) {
+  const [openEditActivityModal, setOpenEditActivityModal] = useState(false)
+  const [openDeleteActivityModal, setOpenDeleteActivityModal] = useState(false)
+  const [currentActivity, setCurrentActivity] = useState<Activity | null>(null)
 
   const toogleEditActivityModal = ({
     isOpen = false,
-    activity = undefined
+    activity = undefined,
   }: {
-    isOpen: boolean;
-    activity?: Activity;
+    isOpen: boolean
+    activity?: Activity
   }) => {
-    setOpenEditActivityModal(isOpen);
-    setCurrentActivity(activity || null);
-  };
+    setOpenEditActivityModal(isOpen)
+    setCurrentActivity(activity || null)
+  }
 
   const toogleDeleteActivityModal = ({
     isOpen = false,
-    activity = undefined
+    activity = undefined,
   }: {
-    isOpen: boolean;
-    activity?: Activity;
+    isOpen: boolean
+    activity?: Activity
   }) => {
-    setOpenDeleteActivityModal(isOpen);
-    setCurrentActivity(activity || null);
-  };
+    setOpenDeleteActivityModal(isOpen)
+    setCurrentActivity(activity || null)
+  }
 
   return (
     <>
@@ -67,8 +55,8 @@ export default function ActivitiesList({
         activity={currentActivity}
         setOpen={setOpenEditActivityModal}
         onClose={() => {
-          toogleEditActivityModal({ isOpen: false });
-          onClose();
+          toogleEditActivityModal({ isOpen: false })
+          onClose()
         }}
       />
 
@@ -77,8 +65,8 @@ export default function ActivitiesList({
         activity={currentActivity}
         setOpen={setOpenDeleteActivityModal}
         onClose={() => {
-          toogleDeleteActivityModal({ isOpen: false });
-          onClose();
+          toogleDeleteActivityModal({ isOpen: false })
+          onClose()
         }}
       />
 
@@ -98,22 +86,13 @@ export default function ActivitiesList({
           <TableBody>
             {department?.activities?.map((activity: any) => {
               return (
-                <TableRow
-                  key={activity.id}
-                  className="hover:bg-slate-50 transition ease-in-out cusror-pointer"
-                >
+                <TableRow key={activity.id} className="hover:bg-slate-50 transition ease-in-out cusror-pointer">
                   <TableCell className="p-3">{activity.name}</TableCell>
+                  <TableCell className="p-3">{activity.startDate?.split("T")?.[0]}</TableCell>
+                  <TableCell className="p-3">{activity.endDate?.split("T")?.[0]}</TableCell>
+                  <TableCell className="p-3">{activity.manager || "--"}</TableCell>
                   <TableCell className="p-3">
-                    {activity.startDate?.split('T')?.[0]}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {activity.endDate?.split('T')?.[0]}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {activity.manager || '--'}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    <Text>{activity.totalTarget || '--'}</Text>
+                    <Text>{activity.totalTarget || "--"}</Text>
                   </TableCell>
                   <TableCell>
                     <ActionsDropdown
@@ -123,7 +102,7 @@ export default function ActivitiesList({
                     />
                   </TableCell>
                 </TableRow>
-              );
+              )
             })}
           </TableBody>
         )}
@@ -135,25 +114,18 @@ export default function ActivitiesList({
         </div>
       )}
     </>
-  );
+  )
 }
 
-type toggleModalActionType = (args: {
-  isOpen: boolean;
-  activity?: Activity;
-}) => void;
+type toggleModalActionType = (args: { isOpen: boolean; activity?: Activity }) => void
 
 type ActionsDropdownProps = {
-  activity: Activity;
-  onEditActivity: toggleModalActionType;
-  onDeleteActivity: toggleModalActionType;
-};
+  activity: Activity
+  onEditActivity: toggleModalActionType
+  onDeleteActivity: toggleModalActionType
+}
 
-export function ActionsDropdown({
-  activity,
-  onEditActivity,
-  onDeleteActivity
-}: ActionsDropdownProps) {
+export function ActionsDropdown({ activity, onEditActivity, onDeleteActivity }: ActionsDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -161,21 +133,16 @@ export function ActionsDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => onEditActivity({ isOpen: true, activity })}
-          >
+          <DropdownMenuItem onClick={() => onEditActivity({ isOpen: true, activity })}>
             <PencilIcon className="mr-2 h-4 w-4" />
             <span>Editer l'activité</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-red-500"
-            onClick={() => onDeleteActivity({ isOpen: true, activity })}
-          >
+          <DropdownMenuItem className="text-red-500" onClick={() => onDeleteActivity({ isOpen: true, activity })}>
             <TrashIcon className="mr-2 h-4 w-4" />
             <span>Supprimer l'activité</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

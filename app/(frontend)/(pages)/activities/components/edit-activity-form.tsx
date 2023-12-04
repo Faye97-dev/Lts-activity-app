@@ -1,91 +1,80 @@
-'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Activity } from 'db/schema';
-import { Button } from '@tremor/react';
-import { useGenericMutation } from '@/hooks/useApi';
-import { useQueryClient } from '@tanstack/react-query';
-import { Textarea } from '@/components/ui/textarea';
-import { API_EDIT_ACTIVITY } from 'config/api-endpoints.config';
-import { toast } from '@/components/ui/use-toast';
-import { CheckCircle } from 'lucide-react';
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
+import { Button } from "@tremor/react"
+import { API_EDIT_ACTIVITY } from "config/api-endpoints.config"
+import { Activity } from "db/schema"
+import { CheckCircle } from "lucide-react"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "@/components/ui/use-toast"
+import { useGenericMutation } from "@/hooks/useApi"
 
 // todo fix validation
 const editActivityFormSchema = z.object({
-  totalCreated: z.string({ required_error: 'Nombre crée est obligatoire.' }),
-  comment: z.string().optional()
-});
+  totalCreated: z.string({ required_error: "Nombre crée est obligatoire." }),
+  comment: z.string().optional(),
+})
 
-type EditActivityFormValues = z.infer<typeof editActivityFormSchema>;
+type EditActivityFormValues = z.infer<typeof editActivityFormSchema>
 
 export function EditActivityForm({
   onClose,
-  activity
+  activity,
 }: {
-  onClose: () => void;
-  activity: any; // todo fixme
+  onClose: () => void
+  activity: any // todo fixme
 }) {
-  const defaultValues: Partial<EditActivityFormValues> = {};
+  const defaultValues: Partial<EditActivityFormValues> = {}
 
   const form = useForm<EditActivityFormValues>({
     resolver: zodResolver(editActivityFormSchema),
     defaultValues,
-    mode: 'onChange'
-  });
+    mode: "onChange",
+  })
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  const { mutate, isPending } = useGenericMutation<
-    EditActivityFormValues,
-    Activity
-  >();
+  const { mutate, isPending } = useGenericMutation<EditActivityFormValues, Activity>()
 
   function onSubmit(formValues: EditActivityFormValues) {
     const payload = {
-      ...formValues
-    };
+      ...formValues,
+    }
 
     mutate(
       {
-        url: API_EDIT_ACTIVITY + '/' + activity.id,
-        method: 'PUT',
-        body: payload
+        url: API_EDIT_ACTIVITY + "/" + activity.id,
+        method: "PUT",
+        body: payload,
       },
       {
         onSuccess: () => {
           toast({
-            variant: 'success',
+            variant: "success",
             description: (
               <div className="flex font-bold items-center gap-2">
                 <CheckCircle className="w-6 h-6" /> Opération reussi.
               </div>
-            )
-          });
-          onClose();
+            ),
+          })
+          onClose()
           queryClient.invalidateQueries({
-            queryKey: ['QUERY_ACTIVITIES_LIST']
-          });
-        }
-      }
-    );
+            queryKey: ["QUERY_ACTIVITIES_LIST"],
+          })
+        },
+      },
+    )
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-3 mt-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-3 mt-4">
         <FormField
           control={form.control}
           name="totalCreated"
@@ -93,11 +82,7 @@ export function EditActivityForm({
             <FormItem>
               <FormLabel>Nombre crée</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter le nombre crée"
-                  {...field}
-                />
+                <Input type="number" placeholder="Enter le nombre crée" {...field} />
               </FormControl>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -118,12 +103,7 @@ export function EditActivityForm({
           )}
         />
         <div className="flex justify-end gap-3 mt-4">
-          <Button
-            color="red"
-            type="button"
-            loading={isPending}
-            onClick={onClose}
-          >
+          <Button color="red" type="button" loading={isPending} onClick={onClose}>
             Annuler
           </Button>
 
@@ -133,5 +113,5 @@ export function EditActivityForm({
         </div>
       </form>
     </Form>
-  );
+  )
 }

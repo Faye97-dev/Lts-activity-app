@@ -1,35 +1,28 @@
-'use client';
-import { useGenericQuery } from '@/hooks/useApi';
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-  Text,
-  Badge
-} from '@tremor/react';
-import { API_DEPARTMENTS_LIST } from 'config/api-endpoints.config';
-import { Activity, Department, User } from 'db/schema';
-import { useRouter } from 'next/navigation';
-import { PackageOpen } from 'lucide-react';
+"use client"
+
+import { useRouter } from "next/navigation"
+import { Badge, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from "@tremor/react"
+import { API_DEPARTMENTS_LIST } from "config/api-endpoints.config"
+import { Activity, Department, User } from "db/schema"
+import { PackageOpen } from "lucide-react"
+
+import { useGenericQuery } from "@/hooks/useApi"
 
 type DepartmentType = Department & {
-  activities: Activity[];
-  createdAt: string;
-  users: User[];
-};
+  activities: Activity[]
+  createdAt: string
+  users: User[]
+}
 
 export default function DepartmentsTable() {
-  const router = useRouter();
+  const router = useRouter()
   const { isLoading, data: payload } = useGenericQuery<null, DepartmentType[]>({
-    queryKey: 'QUERY_DEPARTMENTS_LIST',
-    requestData: { url: API_DEPARTMENTS_LIST, method: 'GET' }
-  });
+    queryKey: "QUERY_DEPARTMENTS_LIST",
+    requestData: { url: API_DEPARTMENTS_LIST, method: "GET" },
+  })
 
   // todo add skeleton
-  if (isLoading) return 'En cours de chargement ...';
+  if (isLoading) return "En cours de chargement ..."
 
   return (
     <>
@@ -51,31 +44,21 @@ export default function DepartmentsTable() {
         {!!payload?.length && (
           <TableBody>
             {payload.map((department) => {
-              const manager = department.users?.[0];
+              const manager = department.users?.[0]
               return (
                 <TableRow
                   key={department.id}
                   className="hover:bg-slate-50 transition ease-in-out cusror-pointer"
-                  onClick={() =>
-                    router.push(`/dashboard/department/${department.id}`)
-                  }
+                  onClick={() => router.push(`/dashboard/department/${department.id}`)}
                 >
                   <TableCell className="p-3">{department.name}</TableCell>
                   <TableCell className="p-3">{department.slug}</TableCell>
+                  <TableCell className="p-3">{manager ? `${manager?.firstName} ${manager?.lastName}` : "--"}</TableCell>
                   <TableCell className="p-3">
-                    {manager
-                      ? `${manager?.firstName} ${manager?.lastName}`
-                      : '--'}
+                    <Text>{manager?.email || "--"}</Text>
                   </TableCell>
-                  <TableCell className="p-3">
-                    <Text>{manager?.email || '--'}</Text>
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {manager?.phone || '--'}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {manager?.whatsappPhone || '--'}
-                  </TableCell>
+                  <TableCell className="p-3">{manager?.phone || "--"}</TableCell>
+                  <TableCell className="p-3">{manager?.whatsappPhone || "--"}</TableCell>
                   {/* <TableCell className="p-3">
                     {manager ? (
                       <Badge color={manager?.isActive ? 'green' : 'red'}>
@@ -85,14 +68,10 @@ export default function DepartmentsTable() {
                       '--'
                     )}
                   </TableCell> */}
-                  <TableCell className="p-3">
-                    {department.activities.length}
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {department.createdAt?.split('T')?.[0]}
-                  </TableCell>
+                  <TableCell className="p-3">{department.activities.length}</TableCell>
+                  <TableCell className="p-3">{department.createdAt?.split("T")?.[0]}</TableCell>
                 </TableRow>
-              );
+              )
             })}
           </TableBody>
         )}
@@ -104,5 +83,5 @@ export default function DepartmentsTable() {
         </div>
       )}
     </>
-  );
+  )
 }

@@ -1,22 +1,16 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import { EditActivityForm } from './edit-activity-form';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { EditActivityForm } from "./edit-activity-form"
 
 export default function EditActivityModal({
   open,
   setOpen,
   onClose,
-  activity
+  activity,
 }: {
-  open: boolean;
-  activity: any; // todo fixme
-  onClose: () => void;
-  setOpen: (open: boolean) => void;
+  open: boolean
+  activity: any // todo fixme
+  onClose: () => void
+  setOpen: (open: boolean) => void
 }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -29,5 +23,5 @@ export default function EditActivityModal({
         </DialogHeader>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

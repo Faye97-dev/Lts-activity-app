@@ -1,65 +1,53 @@
-'use client';
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useSession } from "next-auth/react"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useSession } from 'next-auth/react';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
 const profileFormSchema = z.object({
   firstName: z
-    .string({ required_error: 'Nom est obligatoire.' })
-    .min(2, { message: 'Nom trop court.' })
-    .max(30, { message: 'Nom trop long.' }),
+    .string({ required_error: "Nom est obligatoire." })
+    .min(2, { message: "Nom trop court." })
+    .max(30, { message: "Nom trop long." }),
   lastName: z
-    .string({ required_error: 'Prénom est obligatoire.' })
-    .min(2, { message: 'Prénom trop court.' })
-    .max(30, { message: 'Prénom trop long.' }),
-  email: z
-    .string({ required_error: 'Email est obligatoire.' })
-    .email('Email non valide.'),
+    .string({ required_error: "Prénom est obligatoire." })
+    .min(2, { message: "Prénom trop court." })
+    .max(30, { message: "Prénom trop long." }),
+  email: z.string({ required_error: "Email est obligatoire." }).email("Email non valide."),
   // todo add validation phones
   phone: z.string().optional(),
-  whatsappPhone: z.string().optional()
-});
+  whatsappPhone: z.string().optional(),
+})
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema>
 export function ProfileForm() {
-  const { data: session } = useSession();
+  const { data: session } = useSession()
 
   const defaultValues: Partial<ProfileFormValues> = {
     firstName: session?.user?.token?.firstName,
     lastName: session?.user?.token?.lastName,
     email: session?.user?.token?.email,
-    phone: session?.user?.token?.phone || '',
-    whatsappPhone: session?.user?.token?.whatsappPhone || ''
-  };
+    phone: session?.user?.token?.phone || "",
+    whatsappPhone: session?.user?.token?.whatsappPhone || "",
+  }
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
-    mode: 'onChange'
-  });
+    mode: "onChange",
+  })
 
   function onSubmit(data: ProfileFormValues) {
-    console.log(data);
+    console.log(data)
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <FormField
           disabled
           control={form.control}
@@ -82,10 +70,7 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Prénom</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter le prénom du point focal"
-                  {...field}
-                />
+                <Input placeholder="Enter le prénom du point focal" {...field} />
               </FormControl>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -99,11 +84,7 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  type="email"
-                  placeholder="Enter un adresse mail"
-                  {...field}
-                />
+                <Input type="email" placeholder="Enter un adresse mail" {...field} />
               </FormControl>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -144,5 +125,5 @@ export function ProfileForm() {
         </div> */}
       </form>
     </Form>
-  );
+  )
 }

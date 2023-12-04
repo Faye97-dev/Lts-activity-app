@@ -1,38 +1,29 @@
-import '../../globals.css';
+import "../../globals.css"
 
-import Nav from '@/components/nav';
-import { Suspense } from 'react';
-import ReactQueryProviders from '../react-query-provider';
+import { Suspense } from "react"
+import { Inter as FontSans } from "next/font/google"
+import { auth } from "lib/auth"
+import { cn } from "lib/utils"
+import { SessionProvider } from "next-auth/react"
+
+import Nav from "@/components/nav"
+import { Toaster } from "@/components/ui/toaster"
+import ReactQueryProviders from "../react-query-provider"
 
 export const metadata = {
-  title: 'Lts Next js app'
-};
-
-import { Inter as FontSans } from 'next/font/google';
-import { cn } from 'lib/utils';
-import { Toaster } from '@/components/ui/toaster';
-import { SessionProvider } from 'next-auth/react';
-import { auth } from 'lib/auth';
+  title: "Lts Next js app",
+}
 
 const fontSans = FontSans({
-  subsets: ['latin'],
-  variable: '--font-sans'
-});
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
-export default async function RootLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
-  const session = await auth();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth()
   return (
     <html lang="en">
-      <body
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased',
-          fontSans.variable
-        )}
-      >
+      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <SessionProvider session={session}>
           <ReactQueryProviders>
             <Suspense>
@@ -44,5 +35,5 @@ export default async function RootLayout({
         </SessionProvider>
       </body>
     </html>
-  );
+  )
 }

@@ -1,39 +1,34 @@
-'use client';
+"use client"
 
-import { Fragment } from 'react';
-import { usePathname } from 'next/navigation';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { XIcon } from '@heroicons/react/solid';
-import { DotsCircleHorizontalIcon } from '@heroicons/react/outline';
-
-import { signIn, signOut, useSession } from 'next-auth/react';
-import Image from 'next/image';
-import { LogOut } from 'lucide-react';
-import {
-  ROLE_ADMIN,
-  ROLE_DEFAULT,
-  ROLE_SUPER_ADMIN
-} from 'config/global.config';
+import { Fragment } from "react"
+import Image from "next/image"
+import { usePathname } from "next/navigation"
+import { Disclosure, Menu, Transition } from "@headlessui/react"
+import { DotsCircleHorizontalIcon } from "@heroicons/react/outline"
+import { XIcon } from "@heroicons/react/solid"
+import { ROLE_ADMIN, ROLE_DEFAULT, ROLE_SUPER_ADMIN } from "config/global.config"
+import { LogOut } from "lucide-react"
+import { signIn, signOut, useSession } from "next-auth/react"
 
 const navigation = [
   // { name: 'Accueil', href: '/' },
-  { name: 'Activités', href: '/activities', roles: [ROLE_DEFAULT] },
-  { name: 'Departements', href: '/departments', roles: [ROLE_SUPER_ADMIN] },
-  { name: 'Dashboard', href: '/dashboard', roles: [ROLE_ADMIN] },
+  { name: "Activités", href: "/activities", roles: [ROLE_DEFAULT] },
+  { name: "Departements", href: "/departments", roles: [ROLE_SUPER_ADMIN] },
+  { name: "Dashboard", href: "/dashboard", roles: [ROLE_ADMIN] },
   {
-    href: '/profile',
-    name: 'Mon Profil',
-    roles: [ROLE_SUPER_ADMIN, ROLE_DEFAULT, ROLE_ADMIN]
-  }
-];
+    href: "/profile",
+    name: "Mon Profil",
+    roles: [ROLE_SUPER_ADMIN, ROLE_DEFAULT, ROLE_ADMIN],
+  },
+]
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ")
 }
 
 export default function Navbar({ user }: { user: any }) {
-  const pathname = usePathname();
-  const { data: session } = useSession();
+  const pathname = usePathname()
+  const { data: session } = useSession()
 
   return (
     <Disclosure as="nav" className="bg-white shadow-lg">
@@ -51,12 +46,7 @@ export default function Navbar({ user }: { user: any }) {
                     className="text-gray-100"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <rect
-                      width="100%"
-                      height="100%"
-                      rx="16"
-                      fill="currentColor"
-                    />
+                    <rect width="100%" height="100%" rx="16" fill="currentColor" />
                     <path
                       fillRule="evenodd"
                       clipRule="evenodd"
@@ -67,24 +57,18 @@ export default function Navbar({ user }: { user: any }) {
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation
-                    .filter((item) =>
-                      item.roles.includes(
-                        session?.user?.token?.role?.slug || ''
-                      )
-                    )
+                    .filter((item) => item.roles.includes(session?.user?.token?.role?.slug || ""))
                     .map((item) => (
                       <a
                         key={item.name}
                         href={item.href}
                         className={classNames(
                           pathname === item.href
-                            ? 'border-primary text-primary'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                          'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                            ? "border-primary text-primary"
+                            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                          "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
                         )}
-                        aria-current={
-                          pathname === item.href ? 'page' : undefined
-                        }
+                        aria-current={pathname === item.href ? "page" : undefined}
                       >
                         {item.name}
                       </a>
@@ -98,10 +82,10 @@ export default function Navbar({ user }: { user: any }) {
                       {/* <span className="sr-only">Open user menu</span> */}
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user?.image || 'https://avatar.vercel.sh/leerob'}
+                        src={user?.image || "https://avatar.vercel.sh/leerob"}
                         height={32}
                         width={32}
-                        alt={`${user?.name || 'placeholder'} avatar`}
+                        alt={`${user?.name || "placeholder"} avatar`}
                       />
                     </Menu.Button>
                   </div>
@@ -134,8 +118,8 @@ export default function Navbar({ user }: { user: any }) {
                           {({ active }) => (
                             <button
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'flex items-center hover:bg-red-50 gap-2 w-full px-4 py-2 text-sm text-red-700'
+                                active ? "bg-gray-100" : "",
+                                "flex items-center hover:bg-red-50 gap-2 w-full px-4 py-2 text-sm text-red-700",
                               )}
                               onClick={() => signOut()}
                             >
@@ -149,10 +133,10 @@ export default function Navbar({ user }: { user: any }) {
                           {({ active }) => (
                             <button
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'flex w-full px-4 py-2 text-sm text-gray-700'
+                                active ? "bg-gray-100" : "",
+                                "flex w-full px-4 py-2 text-sm text-gray-700",
                               )}
-                              onClick={() => signIn('github')}
+                              onClick={() => signIn("github")}
                             >
                               Se connecter
                             </button>
@@ -169,10 +153,7 @@ export default function Navbar({ user }: { user: any }) {
                   {open ? (
                     <XIcon className="block h-6 w-6" aria-hidden="true" />
                   ) : (
-                    <DotsCircleHorizontalIcon
-                      className="block h-6 w-6"
-                      aria-hidden="true"
-                    />
+                    <DotsCircleHorizontalIcon className="block h-6 w-6" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
               </div>
@@ -188,11 +169,11 @@ export default function Navbar({ user }: { user: any }) {
                   href={item.href}
                   className={classNames(
                     pathname === item.href
-                      ? 'bg-slate-50 border-slate-500 text-slate-700'
-                      : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
-                    'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
+                      ? "bg-slate-50 border-slate-500 text-slate-700"
+                      : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
+                    "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
                   )}
-                  aria-current={pathname === item.href ? 'page' : undefined}
+                  aria-current={pathname === item.href ? "page" : undefined}
                 >
                   {item.name}
                 </Disclosure.Button>
@@ -212,12 +193,8 @@ export default function Navbar({ user }: { user: any }) {
                       />
                     </div> */}
                     <div className="">
-                      <div className="text-base font-medium text-gray-800">
-                        {user.firstName}
-                      </div>
-                      <div className="text-sm font-medium text-gray-500">
-                        {user.email}
-                      </div>
+                      <div className="text-base font-medium text-gray-800">{user.firstName}</div>
+                      <div className="text-sm font-medium text-gray-500">{user.email}</div>
                     </div>
                   </div>
                   <div className="mt-3 space-y-1">
@@ -236,5 +213,5 @@ export default function Navbar({ user }: { user: any }) {
         </>
       )}
     </Disclosure>
-  );
+  )
 }
