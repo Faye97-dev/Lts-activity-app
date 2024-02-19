@@ -23,23 +23,22 @@ const fontSans = FontSans({
 })
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const headersList = headers()
-  // read the custom x-url header
-  const header_url = headersList.get("x-pathname") || ""
+  const location = headers().get("location") || ""
+  const isAnonymous = location === "/login"
 
   const session = await auth()
-  if (!session?.user) redirect("/api/auth/signin") // todo update to /login
-
-  console.log(header_url, "x-pathname")
+  if (!session?.user && !isAnonymous) redirect("/login")
 
   return (
     <html lang="en">
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <SessionProvider session={session}>
           <ReactQueryProviders>
-            <Suspense>
-              <Nav />
-            </Suspense>
+            {!isAnonymous && (
+              <Suspense>
+                <Nav />
+              </Suspense>
+            )}
             {children}
             <Toaster />
           </ReactQueryProviders>

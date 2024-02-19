@@ -12,10 +12,6 @@ export const authConfig = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text", placeholder: "jsmith@test.com" },
-        password: { label: "Password", type: "password" },
-      },
       async authorize(credentials, req) {
         const email = (credentials?.email || "") as string
         const password = (credentials?.password || "") as string

@@ -8,7 +8,7 @@ import { AddUserType } from "@/validators/departments.schema"
 type registerUserType = AddUserType & { departmentId?: string }
 
 export async function registerNewUser(data: registerUserType) {
-  const hashedPassword = await hash(data.password, 10) // todo improve
+  const hashedPassword = await hash(data.password, 10) // todo improve add salt
 
   let payload: registerUserType & { id: string } = {
     id: uuid(), // todo improve
@@ -24,7 +24,7 @@ export async function registerNewUser(data: registerUserType) {
 
   // todo check if email already exists
 
-  if (data?.departmentId) payload.departmentId = data?.departmentId
+  if (data?.departmentId) payload.departmentId = data.departmentId
 
   const user = await db.insert(users).values(payload).returning()
   const { password, ...result } = user?.[0]
