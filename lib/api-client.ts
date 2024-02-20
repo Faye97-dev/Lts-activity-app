@@ -34,7 +34,7 @@ export default function client<PayloadType, ResponseType>({
   if (body && config.method !== "GET") config.body = JSON.stringify(body)
 
   const promise: Promise<ResponseType> = window.fetch(`${baseUrl}${endpoint}`, config).then(async (response) => {
-    if (response.status === 401) return // todo redirect to login page
+    if (response.status === 401) return // todo redirect to login
     if (response.status === 202) return Promise.resolve()
 
     const data = await response.json()

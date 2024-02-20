@@ -32,7 +32,7 @@ export const authConfig = {
   ],
   callbacks: {
     async session({ session, token }) {
-      session.user.token = token // todo fixme
+      session.user.token = token // todo fix types
       return session
     },
     jwt: async ({ user, token }) => {
@@ -40,26 +40,23 @@ export const authConfig = {
       return token
     },
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const adminPaths = ["/bo/department", "/bo/activity"]
-      const managerPaths = ["/dashboard"]
-      const userPaths = ["/activity"]
-      let paths = ["/profile"]
-
-      const isProtected = paths.some((path) => nextUrl.pathname.startsWith(path))
+      // const isLoggedIn = !!auth?.user
+      // const adminPaths = ["/bo/department", "/bo/activity"]
+      // const managerPaths = ["/dashboard"]
+      // const userPaths = ["/activity"]
+      // let paths = ["/profile"]
+      // const isProtected = paths.some((path) => nextUrl.pathname.startsWith(path))
       // todo handle role autorization
-
-      if (isProtected && !isLoggedIn) {
-        const redirectUrl = new URL("api/auth/signin", nextUrl.origin)
-        // redirectUrl.searchParams.append("callbackUrl", nextUrl.href) // todo fixme
-        return Response.redirect(redirectUrl)
-      }
-
+      // if (isProtected && !isLoggedIn) {
+      //   const redirectUrl = new URL("api/auth/signin", nextUrl.origin)
+      // redirectUrl.searchParams.append("callbackUrl", nextUrl.href) // todo fixme
+      //   return Response.redirect(redirectUrl)
+      // }
       return true
     },
   },
   pages: {
-    // signIn: '/auth/signin',
+    signIn: '/login',
     // signOut: '/auth/signout',
   },
 } satisfies NextAuthConfig

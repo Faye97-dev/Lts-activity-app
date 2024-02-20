@@ -1,14 +1,15 @@
 "use client"
 
 import { Fragment } from "react"
-import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Disclosure, Menu, Transition } from "@headlessui/react"
 import { DotsCircleHorizontalIcon } from "@heroicons/react/outline"
 import { XIcon } from "@heroicons/react/solid"
 import { NAVIGATION_ROUTES } from "config/global.config"
-import { LogOut } from "lucide-react"
+import { LogOut, UserCircle2 } from "lucide-react"
 import { signIn, signOut, useSession } from "next-auth/react"
+
+import NavBarLogo from "./icons/NavBarLogo"
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ")
@@ -26,22 +27,7 @@ export default function Navbar({ user }: { user: any }) {
             <div className="flex h-16 justify-between">
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    className="text-gray-100"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect width="100%" height="100%" rx="16" fill="currentColor" />
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-                      fill="black"
-                    />
-                  </svg>
+                  <NavBarLogo />
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {NAVIGATION_ROUTES.filter((item) => item.roles.includes(session?.user?.token?.role?.slug || "")).map(
@@ -67,14 +53,7 @@ export default function Navbar({ user }: { user: any }) {
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-                      {/* <span className="sr-only">Open user menu</span> */}
-                      <Image
-                        className="h-8 w-8 rounded-full"
-                        src={user?.image || "https://avatar.vercel.sh/leerob"}
-                        height={32}
-                        width={32}
-                        alt={`${user?.name || "placeholder"} avatar`}
-                      />
+                      <UserCircle2 size={36} strokeWidth="1" color="#909090" />
                     </Menu.Button>
                   </div>
                   <Transition
@@ -136,36 +115,32 @@ export default function Navbar({ user }: { user: any }) {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 pt-2 pb-3">
-              {NAVIGATION_ROUTES.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  className={classNames(
-                    pathname === item.href
-                      ? "bg-slate-50 border-slate-500 text-slate-700"
-                      : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
-                    "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
-                  )}
-                  aria-current={pathname === item.href ? "page" : undefined}
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
+              {NAVIGATION_ROUTES.filter((item) => item.roles.includes(session?.user?.token?.role?.slug || "")).map(
+                (item) => (
+                  <Disclosure.Button
+                    key={item.name}
+                    as="a"
+                    href={item.href}
+                    className={classNames(
+                      pathname === item.href
+                        ? "bg-slate-50 border-slate-500 text-slate-700"
+                        : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
+                      "block pl-3 pr-4 py-2 border-l-4 text-sm",
+                    )}
+                    aria-current={pathname === item.href ? "page" : undefined}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                ),
+              )}
             </div>
             <div className="border-t border-gray-200 pt-4 pb-3">
               {user && (
                 <>
-                  <div className="flex items-center px-4">
-                    <div className="">
-                      <div className="text-base font-medium text-gray-800">{user.firstName}</div>
-                      <div className="text-sm font-medium text-gray-500">{user.email}</div>
-                    </div>
-                  </div>
-                  <div className="mt-3 space-y-1">
+                  <div>
                     <button
                       onClick={() => signOut()}
-                      className="flex items-center gap-2 px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                      className="flex items-center gap-2 px-4 py-2 text-gray-500 text-sm text-red-700"
                     >
                       <LogOut className="h-4 w-4" />
                       Se déconneter

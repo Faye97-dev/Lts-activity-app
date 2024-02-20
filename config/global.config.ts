@@ -6,9 +6,9 @@ export const KEEP_PREVIOUS_DATA = false
 export const REFECH_ON_WINDOW_FOCUS = false
 
 // roles
-export const ROLE_ADMIN = "ADMIN"
-export const ROLE_DEFAULT = "DEFAULT"
-export const ROLE_SUPER_ADMIN = "SUPER_ADMIN"
+export const ROLE_ADMIN = "ADMIN" // kpis admin user
+export const ROLE_DEFAULT = "DEFAULT" // default user 
+export const ROLE_SUPER_ADMIN = "SUPER_ADMIN" // root user
 
 
 // navigation 
@@ -25,15 +25,15 @@ export const NAVIGATION_ROUTES = [
 
 export const ROUTES_GUARDS = {
     [ROLE_DEFAULT]: {
-        routes: ["/profile", "/activities"],
-        default: "activities"
+        routes: ["/login", '/', "/profile", "/activities"],
+        default: "/activities"
     },
     [ROLE_ADMIN]: {
-        routes: ["/profile", "/dashboard", "/dashboard/activity", "/dashboard/department"],
-        default: "dashboard"
+        routes: ["/login", '/', "/profile", "/dashboard", "/dashboard/activity", "/dashboard/department"],
+        default: "/dashboard"
     },
     [ROLE_SUPER_ADMIN]: {
-        routes: ["/profile", "/departments"],
-        default: "departments"
+        routes: ["/login", '/', "/profile", "/departments"],
+        default: "/departments"
     }
 }

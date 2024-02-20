@@ -2,9 +2,9 @@ import "../../globals.css"
 
 import { Suspense } from "react"
 import { Inter as FontSans } from "next/font/google"
-// app/layout.tsx
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { ROUTES_GUARDS } from "config/global.config"
 import { auth } from "lib/auth"
 import { cn } from "lib/utils"
 import { SessionProvider } from "next-auth/react"
@@ -14,7 +14,7 @@ import { Toaster } from "@/components/ui/toaster"
 import ReactQueryProviders from "../react-query-provider"
 
 export const metadata = {
-  title: "Lts Next js app",
+  title: "Gouvernance de l'action publique",
 }
 
 const fontSans = FontSans({
@@ -27,7 +27,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const isAnonymous = location === "/login"
 
   const session = await auth()
-  if (!session?.user && !isAnonymous) redirect("/login")
+  const isAuthenticated = session?.user
+
+  // user not authenticated
+  if (!isAuthenticated && !isAnonymous) redirect("/login")
+
+  // user not authenticated
+  if (isAuthenticated && isAnonymous) redirect("/")
+
+  const roles = Object.keys(ROUTES_GUARDS)
+  const userRole = session?.user?.token.role.slug as keyof typeof ROUTES_GUARDS
+  // user authorized to access page
+  if (roles.includes(userRole) && !ROUTES_GUARDS[userRole].routes.includes(location)) {
+    return redirect("/404") // todo add 404 page
+  }
 
   return (
     <html lang="en">

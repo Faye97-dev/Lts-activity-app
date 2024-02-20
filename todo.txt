@@ -16,32 +16,37 @@
 
 ------------------------------
 -- required :
+// add logo and remove avatar icon **
+// add auth , guards check in root layout **
+// fix navigation in mobile viewport and styles issues **
+// todo redirect to 403 page when user logged but haven't role grant ( export navigation ) **
+
+// add department description in header in list activities 
+// test login and page guards and logout ( switch between accounts ) 
+// custom login page , and redirect to / when already logged in 
+// add roles ( seeders ) and add DEFAULT admin and stage user 
+
 // clean todos !!
 // update password 
 // todo add db transaction 
-// add auth , guards check in root layout !!
+// check if email already exists on create new user / department
 // todo add types definition ( remove any frontend side ) !! 
-// todo redirect to 403 page when user logged but haven't role grant ( export navigation ) !!
-// custom login page , and redirect to / when already logged in 
+// todo add pagination ( in all listing api / front )
 
 --- easy stuff :
-// add logo and remove avatar icon 
 // todo order by default desc by created 
-// add department description in header in list activities 
 // fix trucante long comment , comment optional 
 // update activity modal ( form inputs , modal title .... ) 
 
 --- stage 2 :
-// todo add pagination !!
-// add roles ( seeders ) and add DEFAULT admin and stage user 
 // todo refactor big components into small one 
 
 --- improvements :
-// todo lint project and add prettier config
+// todo lint project and add prettier config **
 // todo add logger instead of console.log ( api error ....) !!
 
 --- improvements :
-// todo add skeleton 
+// todo add skeleton or loaders
 // move toaster to top
 // update my profil data
 // todo handle error pages 

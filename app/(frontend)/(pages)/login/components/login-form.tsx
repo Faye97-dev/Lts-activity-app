@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
 import { cn } from "lib/utils"
 import { signIn } from "next-auth/react"
 
@@ -11,9 +10,12 @@ import { Label } from "@/components/ui/label"
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
+// todo add form validation
+// todo add alert toaster
+// todo add loader
+
 export function LoginForm({ className, ...props }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const router = useRouter()
 
   function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
@@ -21,12 +23,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       .then((response) => {
         console.log(response, "response")
         if (!response?.error && response?.ok) {
-          router.push("/dashboard") // todo
+          window.location.href = "/"
         } else {
-          console.log(response?.error, "error")
+          console.log(response?.error)
         }
       })
-      .catch((error) => console.log(error, "catch error")) // todo
+      .catch((error) => console.log(error))
   }
 
   return (

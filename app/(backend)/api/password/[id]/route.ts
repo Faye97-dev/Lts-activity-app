@@ -8,7 +8,7 @@ import * as z from "zod"
 
 const updatePasswordSchema = z.object({
   password: z.string(),
-  confirmPassword: z.string(), // todo fix
+  confirmPassword: z.string(), // todo fixme
 })
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
