@@ -6,63 +6,101 @@ import { signIn } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import * as z from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { toast } from "@/components/ui/use-toast"
+import { AlertTriangle, CheckCircle } from "lucide-react"
 
-interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+const loginFormSchema = z.object({
+  email: z.string({ required_error: "Email est obligatoire." }).email("Email non valide."),
+  password: z.string({ required_error: "Mot de passe est obligatoire." }), // todo fix emptystring validation
+})
+type LoginFormValues = z.infer<typeof loginFormSchema>
 
-// todo add form validation
-// todo add alert toaster
-// todo add loader
-
-export function LoginForm({ className, ...props }: LoginFormProps) {
+export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
-  function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-    signIn("credentials", { email: "super-admin@dev.com", password: "dev", redirect: false })
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {  },
+    mode: "onChange",
+  })
+
+  const authErrorAlert = () => toast({
+    variant: "destructive",
+    description: (
+      <div className="flex font-bold items-center gap-2">
+        <AlertTriangle className="w-6 h-6" />
+        Email ou mot de passe incorrect.
+      </div>
+    ),
+  })
+
+  const authSuccessAlert = () => toast({
+    variant: "success",
+    description: (
+      <div className="flex font-bold items-center gap-2">
+        <CheckCircle className="w-6 h-6" />Connexion reussi.
+      </div>
+    ),
+  })
+
+  function onSubmit(formValues: LoginFormValues) {
+    // todo { email: "super-admin@gmail.com", password: "dev", redirect: false }
+    setIsLoading(true)
+    signIn("credentials", { ...formValues, redirect: false })
       .then((response) => {
-        console.log(response, "response")
         if (!response?.error && response?.ok) {
+          authSuccessAlert()
           window.location.href = "/"
-        } else {
-          console.log(response?.error)
-        }
+        } else authErrorAlert()
       })
-      .catch((error) => console.log(error))
+      .catch(() => authErrorAlert()).finally(() => setIsLoading(false))
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
-        <div className="grid gap-6">
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="email">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              autoCorrect="off"
-              autoComplete="email"
-              autoCapitalize="none"
-              placeholder="entrez votre adresse e-mail..."
-              disabled={isLoading}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="grid gap-4">
+            <FormField
+              name="email"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="Entrez votre adresse e-mail..."
+                      {...field} />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
             />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mot de passe</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="mot de passe..."  {...field} />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <Button disabled={isLoading}>
+              Se connecter
+            </Button>
           </div>
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="password">
-              Mot de passe
-            </Label>
-            <Input id="password" type="password" placeholder="mot de passe..." disabled={isLoading} />
-          </div>
-          <Button disabled={isLoading}>
-            {/* {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )} */}
-            Se connecter
-          </Button>
-        </div>
-      </form>
+        </form>
+      </Form>
     </div>
   )
 }

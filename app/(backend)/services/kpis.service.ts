@@ -32,7 +32,11 @@ const groupByTimebyDate = (timeline: Timeline[], departmentId: string) => {
 }
 
 const mergeTimelines = (timelines: TimelineKpisType[][]) => {
-  const flattenTimelines = timelines.reduce((prev, next) => prev.concat(next))
+  let flattenTimelines = timelines.reduce((prev, next) => prev.concat(next))
+  // sort asc by createdAt
+  flattenTimelines = flattenTimelines.sort(
+    (p1, p2) => (new Date(p1.createdAt) > new Date(p2.createdAt)) ? 1 :
+      (new Date(p1.createdAt) < new Date(p2.createdAt)) ? -1 : 0);
 
   const trackedDates: string[] = []
   const mergedTimelines: TimelineKpisType[] = []
